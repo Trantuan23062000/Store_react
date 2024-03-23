@@ -1,0 +1,2 @@
+npx sequelize model:generate --name OrderDetail --attributes name:string,orderId:UUID,UserId:UUID,quantity:integer
+npx sequelize-cli db:migrate
