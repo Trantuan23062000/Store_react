@@ -7,6 +7,7 @@ import { Context } from '../../context/index'
 import { useParams } from 'react-router-dom'
 import { Data } from '../../dates/jummy'
 import Brand from '../../components/brand/Brand'
+import Product from "../../components/product/product"
 
 const AdminDashboard = () => {
 
@@ -35,6 +36,9 @@ const AdminDashboard = () => {
           }
           {
             category === 'brand' && <Brand />
+          }
+          {
+            category === 'product' &&<Product/>
           }
         </div>
       </div>

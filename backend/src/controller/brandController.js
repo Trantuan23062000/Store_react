@@ -87,9 +87,29 @@ const DeleteBrand = async (req, res) => {
   }
 };
 
+const Search = async (req, res) => {
+  try {
+    const { name } = req.query;
+    const brand = await BrandServices.SearchBrand(name);
+      return res.status(200).json({
+        EM: brand.EM,
+        EC: brand.EC,
+        DT: brand.brand
+      })
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      EM:brand.EM,
+      EC:brand.EC,
+      DT:[]
+    })
+  }
+};
+
 module.exports = {
   Create,
   GetListBrand,
   EditBrand,
   DeleteBrand,
+  Search
 };

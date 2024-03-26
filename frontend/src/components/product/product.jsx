@@ -1,56 +1,49 @@
 import React, { useEffect, useState } from "react";
+import {
+  getProduct,
+  DeleteProduct,
+  SearchProduct,
+} from "../../services/product";
 import ModalCreate from "./ModalCreate";
-import DeteteModal from "./DeteteModal";
-import { getBrands, DeletBrand, SearchBrand } from "../../services/brand";
+import ModalDelete from "./ModalDelete";
 import toast from "react-hot-toast";
 
-const Brand = () => {
-  //set modal show dataBrand
-  const [showModalCreate, setShowModalCreate] = useState(false);
-  //data
-  const [listbrand, setListBrand] = useState([]);
-  //xet deu kien bien action
+const Product = () => {
+  //const [data, setData] = useState({});
+  const [listProduct, setListProduct] = useState([]);
+  const [show, setShow] = useState("");
   const [action, setAction] = useState("CREATE");
-  //khoi tao du lieu data create
+  //data modal edit
   const [data, setData] = useState({});
-  //set show modal delete
-  const [showDelete, setShowDelete] = useState(false);
-  //set data moi
 
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentLimit] = useState(3);
-  //paginate
+
+  const [showModalDelete, setShowModalDelete] = useState(false);
 
   const [key, setKey] = useState("");
 
-  const fetch = async () => {
+  const fetchData = async () => {
+    const res = await getProduct(currentPage, currentLimit);
+    if (res && res.data && res.data.EC === 0) {
+      setListProduct(res.data.DT.product);
+      setTotalPages(res.data.DT.totalPages);
+      //console.log(res.data.DT.product);
+    }
+  };
+
+  const fetchDataSearch = async () => {
     if (key !== "") {
       try {
-        const res = await SearchBrand(key);
-        setListBrand(res.data.DT);
+        const res = await SearchProduct(key);
+        //console.log(res.data.DT);
+        setListProduct(res.data.DT);
       } catch (error) {
         console.log(error);
       }
     } else {
-      setListBrand([]);
-    }
-  };
-
-  useEffect(() => {
-    fetchdata();
-    fetch();
-    // eslint-disable-next-line
-  }, [currentPage, key]);
-
-  const cofirmModalDelete = async () => {
-    let response = await DeletBrand(data.id);
-    if (response && response.data.EC === 0) {
-      toast.success(response.data.EM);
-      setShowDelete(false);
-      fetchdata();
-    } else {
-      toast.error(response.data.EM);
+      setListProduct([]);
     }
   };
 
@@ -70,58 +63,65 @@ const Brand = () => {
     }
   };
 
-  const handdleShowDelete = (brand) => {
-    //setDataModalDelete(brand);
-    setShowDelete(true);
-    setData(brand);
+  const handleShow = () => {
+    setShow(true);
   };
-
-  const closeDelete = () => {
-    setShowDelete(false);
-  };
-
-  const fetchdata = async () => {
-    let response = await getBrands(currentPage, currentLimit);
-    //console.log(response);
-    //console.log(response);
-    if (response && response.data && response.data.EC === 0) {
-      setTotalPages(response.data.DT.totalPages);
-      setListBrand(response.data.DT.brand);
-    }
-  };
-
-  const HandleShowModalCreate = () => {
-    setShowModalCreate(true);
-  };
-
-  const CloseModalCreate = () => {
-    setShowModalCreate(false);
+  const handleClose = () => {
+    setShow(false);
     setData({});
   };
 
-  const HandleEdit = (brand) => {
-    setData(brand);
-    setShowModalCreate(true);
+  const handleEdit = (product) => {
+    setData(product);
+    setShow(true);
     setAction("UPDATE");
-    //console.log(setData(brand));
   }
+
+  const handleShowModalDelete = (product) => {
+    setData(product);
+    setShowModalDelete(true)
+    fetchData();
+  };
+
+  const handleCloseModalDelete = () => {
+    setShowModalDelete(false);
+  };
+
+  const cofirmModalDelete = async () => {
+    let response = await DeleteProduct(data.id);
+    console.log(response);
+    if (response && response.data.EC === 0) {
+      toast.success(response.data.EM);
+      setShowModalDelete(false);
+      fetchData();
+    } else {
+      toast.error(response.data.EM);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    fetchDataSearch();
+  }, [currentPage, key]);
+
   return (
     <div>
       <div className=" p-6 mb-1 bg-gray-200 min-h-48 m-24 items-center rounded-lg shadow-md">
-        {showDelete ? (
-          <DeteteModal
-            onclose={closeDelete}
-            onCofirm={cofirmModalDelete}
+        {showModalDelete ? (
+          <ModalDelete
+            onClose={handleCloseModalDelete}
             data={data}
+            fectch={fetchData}
+            onConfirm={cofirmModalDelete}
           />
         ) : null}
-        {showModalCreate ? (
+        {show ? (
           <ModalCreate
-            HandleShowModalCreate={HandleShowModalCreate}
-            CloseModalCreate={CloseModalCreate}
-            fetchdata={fetchdata}
+            onShow={handleShow}
+            onClose={handleClose}
+            fectch={fetchData}
             action={action}
-            data={data}
+            dataPr={data}
           />
         ) : null}
         <div className="flex justify-between">
@@ -136,7 +136,7 @@ const Brand = () => {
           </div>
           <button
             onClick={() => {
-              HandleShowModalCreate(true);
+              setShow(true);
               setAction("CREATE");
             }}
             type="button"
@@ -186,32 +186,71 @@ const Brand = () => {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
+                  price
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Quantity
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Category
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Brand
+                </th>
+
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Action
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {listbrand && listbrand.length > 0 ? (
+              {listProduct && listProduct.length > 0 ? (
                 <>
-                  {listbrand.map((item, index) => {
+                  {listProduct.map((item, index) => {
                     return (
                       <tr key={`row-${index}`}>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {(currentPage - 1) * currentLimit + index + 1}
+                          {index + 1}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {" "}
                           {item.name}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {item.description}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
+                          {item.price.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          })}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {item.quantity}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {item.category}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                         {item.Brand.name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <button
-                            onClick={() => {
-                              HandleEdit(item);
-                            }}
                             type="button"
+                            onClick={() => {
+                              handleEdit(item);
+                            }}
                           >
                             <svg
                               className="w-6 h-6 hover:text-amber-800 text-yellow-400 dark:text-white"
@@ -233,7 +272,9 @@ const Brand = () => {
                           </button>
                           <button
                             type="button"
-                            onClick={() => handdleShowDelete(item)}
+                            onClick={() => {
+                              handleShowModalDelete(item);
+                            }}
                           >
                             <svg
                               className="w-6 h-6 hover:text-red-800 text-red-500 dark:text-white"
@@ -263,6 +304,7 @@ const Brand = () => {
               )}
             </tbody>
           </table>
+
           {totalPages > 0 && (
             <div className="flex items-center gap-4 p-5 float-end">
               <div className="flex items-center gap-4">
@@ -338,4 +380,4 @@ const Brand = () => {
   );
 };
 
-export default Brand;
+export default Product;

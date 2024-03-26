@@ -21,6 +21,9 @@ module.exports = {
       quantity: {
         type: Sequelize.INTEGER
       },
+      category: {
+        type: Sequelize.STRING
+      },
       brandId: {
         type: Sequelize.UUID
       },

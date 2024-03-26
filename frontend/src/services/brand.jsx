@@ -21,3 +21,7 @@ export const DeletBrand = (id) =>{
     return axios.delete(`http://localhost:8000/api/v1/brand/delete/${id}`,)
 }
 
+export const SearchBrand = (name) =>{
+    return axios.get(`http://localhost:8000/api/v1/brand/search/?name=${name}`)
+}
+

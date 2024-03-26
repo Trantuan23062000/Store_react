@@ -1,15 +1,20 @@
 import db from "../models/index";
+import { Op } from "sequelize";
 
 const checkBrand = async (brandData) => {
   let check = await db.Brands.findOne({
     where: { name: brandData },
   });
+  
   //console.log(check);
   if (check) {
     return true;
   }
   return false;
-}
+
+};
+
+
 
 const CreateBrand = async (data) => {
   let isExitbrand = await checkBrand(data.name);
@@ -24,7 +29,6 @@ const CreateBrand = async (data) => {
       name: data.name,
       description: data.description,
     });
-
     return {
       success: "Brand Create",
       EC: 0,
@@ -39,31 +43,10 @@ const CreateBrand = async (data) => {
   }
 };
 
-const checkNameBrand = async (data) => {
-  let check = await db.Brands.findOne({
-    where: { name: data },
-  });
-
-  if (check) {
-    return true;
-  } else {
-    return false;
-  }
-};
 
 const updateBrand = async (data) => {
   try {
     const brand = await db.Brands.findOne({ where: { id: data.id } });
-    let check = await checkNameBrand(data.name);
-    //console.log(check);
-    if (check === true) {
-      //console.log(check);
-      return {
-        EM: "Name Brand is already exits  !",
-        EC: -1,
-      };
-    }
-
     if (brand) {
       await brand.update({
         name: data.name,
@@ -88,6 +71,7 @@ const updateBrand = async (data) => {
 const getListBrand = async () => {
   try {
     let brand = await db.Brands.findAll({
+      order: [["name", "DESC"]],
       nest: true,
     });
 
@@ -107,29 +91,30 @@ const getUserPagination = async (page, limit) => {
     const { count, rows } = await db.Brands.findAndCountAll({
       offset: offset,
       limit: limit,
-      attributes: ["id","name", "description"],
-      order: [['name','DESC']]
-    })
+      attributes: ["id", "name", "description"],
+      order: [["name", "DESC"]],
+    });
     let totalPages = Math.ceil(count / limit);
     let data = {
       totalRows: count,
       totalPages: totalPages,
       brand: rows,
-    }
+    };
     return {
       EM: "OK",
       EC: 0,
-      DT:data,
-    }
+      DT: data,
+    };
   } catch (error) {
     console.log(error);
     return {
       EM: "Something wrongs with servies",
       EC: 1,
       DT: [],
-    }
+    };
   }
 };
+
 
 const deleteBrand = async (BrandID) => {
   try {
@@ -143,11 +128,36 @@ const deleteBrand = async (BrandID) => {
       EM: "OK delete",
       EC: 0,
       brand,
-    }
+    };
   } catch (error) {
     console.log(error);
   }
-}
+};
+
+const SearchBrand = async (name) => {
+  try {
+    let brand = await db.Brands.findAll({
+      where: {
+        name: {
+          [Op.like]: `%${name}%`,
+        },
+      },
+      
+    });
+    return {
+      EM: "Data search....",
+      EC: 0,
+      brand,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Server Errrorrr...",
+      EC: -1,
+      DT: "",
+    };
+  }
+};
 
 module.exports = {
   CreateBrand,
@@ -155,4 +165,5 @@ module.exports = {
   updateBrand,
   deleteBrand,
   getUserPagination,
-}
+  SearchBrand,
+};

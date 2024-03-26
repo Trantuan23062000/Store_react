@@ -7,7 +7,7 @@ import { Toaster } from 'react-hot-toast';
 function App() {
   const navigate = useNavigate()
   useEffect(()=>{
-      navigate('/admin-dashboard/brand')
+      navigate('/admin-dashboard/product')
       // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
   return (

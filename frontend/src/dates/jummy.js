@@ -25,7 +25,7 @@ export let Data = [
             {
                 icon: 'fa-solid fa-solid fa-square',
                 text: 'Product',
-                url: 'main'
+                url: 'product'
             },
             {
                 icon: 'fa-regular fa-comment-dots',
