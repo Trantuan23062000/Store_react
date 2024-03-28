@@ -7,7 +7,15 @@ import ImageController from "../controller/image_controller"
 
 
 const router = express.Router();
-const upload = multer({ dest: 'src/uploads/' });
+const upload = multer({ dest: 'src/uploads/',
+fileFilter: (req, file, cb) => {
+  if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+    req.fileValidationError = 'Only image files are allowed!';
+    return cb(new Error('Only image files are allowed!'));
+  }
+  cb(null, true);
+}
+ });
 
 const ApiRouter = (app) => {
   //Brand
@@ -25,7 +33,9 @@ const ApiRouter = (app) => {
   router.delete("/product/delete/:id",ProductController.deleteProduct)
   router.get("/product/search",ProductController.Search)
   
-  router.post("/image/create",upload.single('image'),ImageController.CreateImage)
+  router.post("/image/create",upload.array('images',10),ImageController.CreateImage)
+  router.get("/image/getImage",ImageController.listImages)
+
   
   router.get("/home", HomeController.handleHello);
   return app.use("/api/v1", router);

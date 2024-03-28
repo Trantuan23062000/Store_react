@@ -13,7 +13,7 @@ const CreateProduct = async (req, res) => {
       res.status(200).json({
         EM: product.EM,
         EC: product.EC,
-        DT: product.product,
+        DT: [],
       });
     }
   } catch (error) {

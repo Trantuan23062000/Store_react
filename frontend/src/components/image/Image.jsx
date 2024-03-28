@@ -29,7 +29,7 @@ const Image = () => {
 
   return (
     <div>
-      {show ? <Form onClose={handleClose} onShow={handleShow} /> : null}
+      {show ? <Form onClose={handleClose} onShow={handleShow} fetchData = {fetchImage} /> : null}
       <div>
         <div className=" p-6 mb-1 bg-gray-200 min-h-48 m-24 items-center rounded-lg shadow-md">
           <div className="flex justify-between">
@@ -99,9 +99,19 @@ const Image = () => {
                     {image.map((item, index) => {
                       return (
                         <tr key={`row-${index}`}>
-                          <td className="px-6 py-4 whitespace-nowrap">{index+1}</td>
-                          <td className="px-6 py-4 whitespace-nowrap">{item.URL}</td>
-                          <img  src="http://localhost:8000/uploads/URL-1711561966910"/>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {index + 1}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                          {item.URL.length > 30 ? `${item.URL.substring(0, 30)}...` : item.URL}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <img
+                              class="rounded-lg w-20 h-20"
+                              src={item.URL}
+                              alt="image description"
+                            />
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <button type="button">
                               <svg

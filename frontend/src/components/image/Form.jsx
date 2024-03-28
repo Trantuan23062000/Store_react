@@ -66,19 +66,20 @@ const Form = (props) => {
 
     const formData = new FormData();
     selectedFiles.forEach((file) => {
-      formData.append("URL", file);
+      formData.append("images", file);
     });
 
     try {
       const response = await CreateImage(formData);
-      console.log(response);
-      if (response && response.data && response.data.EC === 0) {
-        toast.success(response.data.EM);
-        props.onClose();
-      } else {
-        toast.error(response.data.EM);
-        props.onShow();
+      if(response && response.data && response.data.EC){
+        toast.success(response.data.success)
+        props.onClose()
+        props.fetchData()
+      }else{
+        toast.error(response.data.error)
+        props.onShow()
       }
+      
     } catch (error) {
       console.log(error);
     }
