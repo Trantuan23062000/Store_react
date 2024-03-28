@@ -67,6 +67,11 @@ export let Data = [
                 text: 'Size',
                 url: 'main'
             },
+            {
+                icon: 'fa-solid fa-solid fa-image',
+                text: 'Image',
+                url: 'image'
+            },
         ]
     },
     {

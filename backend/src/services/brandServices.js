@@ -14,8 +14,6 @@ const checkBrand = async (brandData) => {
 
 };
 
-
-
 const CreateBrand = async (data) => {
   let isExitbrand = await checkBrand(data.name);
   if (isExitbrand === true) {

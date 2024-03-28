@@ -2,6 +2,43 @@ import db from "../models/index";
 import { Op } from "sequelize";
 
 const updateProduct = async (data) => {
+  if (!data.name) {
+    return {
+      EM: "Name required !",
+      EC: -1,
+    };
+  }
+  if (!data.description) {
+    return {
+      EM: "Description required !",
+      EC: -1,
+    };
+  }
+  if (!data.quantity) {
+    return {
+      EM: "Quantity required !",
+      EC: -1,
+    };
+  }
+  if (!data.price) {
+    return {
+      EM: "Price required !",
+      EC: -1,
+    };
+  }
+  if (!data.category) {
+    return {
+      EM: "Category required !",
+      EC: -1,
+    };
+  }
+  if (!data.brandId) {
+    return {
+      EM: "BrandId required !",
+      EC: -1,
+    };
+  }
+
   try {
     const product = await db.Products.findOne({ where: { id: data.id } });
     console.log(product);
@@ -77,12 +114,11 @@ const checkProduct = async (brandData) => {
   }
   return false;
 };
-
 const createProduct = async (data) => {
   let isExitproduct = await checkProduct(data.name);
   if (isExitproduct === true) {
     return {
-      EM: "Brand is already exits",
+      EM: "Product is already exits",
       EC: 1,
     };
   }

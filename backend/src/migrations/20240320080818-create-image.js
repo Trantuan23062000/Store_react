@@ -10,10 +10,7 @@ module.exports = {
         primaryKey: true
       },
       URL: {
-        type: Sequelize.STRING
-      },
-      productId: {
-        type: Sequelize.UUID
+        type: Sequelize.TEXT
       },
       createdAt: {
         allowNull: false,

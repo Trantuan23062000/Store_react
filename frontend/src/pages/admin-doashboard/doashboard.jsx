@@ -8,6 +8,7 @@ import { useParams } from 'react-router-dom'
 import { Data } from '../../dates/jummy'
 import Brand from '../../components/brand/Brand'
 import Product from "../../components/product/product"
+import Image from '../../components/image/Image'
 
 const AdminDashboard = () => {
 
@@ -39,7 +40,9 @@ const AdminDashboard = () => {
           }
           {
             category === 'product' &&<Product/>
-          }
+          }{
+            category === 'image' && <Image/>
+          } 
         </div>
       </div>
     </div>

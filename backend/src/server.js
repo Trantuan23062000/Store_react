@@ -5,8 +5,6 @@ import bodyParser from "body-parser"
 import config from "./config/cors"
 import cors from "cors"
 
-
-
 require("dotenv").config()
 const app = express()
 app.use(bodyParser.json())
@@ -15,9 +13,6 @@ app.use(cors())
 ApiRouter(app)
 connect(app)
 config(app)
-
-
-
 
 
 const PORT = process.env.PORT || 8001
