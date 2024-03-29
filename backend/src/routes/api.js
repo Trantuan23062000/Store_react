@@ -35,6 +35,7 @@ const ApiRouter = (app) => {
   
   router.post("/image/create",upload.array('images',10),ImageController.CreateImage)
   router.get("/image/getImage",ImageController.listImages)
+  router.put("/image/update/:id",upload.single('images'),ImageController.updateImageById)
 
   
   router.get("/home", HomeController.handleHello);

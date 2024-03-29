@@ -71,7 +71,7 @@ const Form = (props) => {
 
     try {
       const response = await CreateImage(formData);
-      if(response && response.data && response.data.EC){
+      if(response && response.data && response.data.EC === 0){
         toast.success(response.data.success)
         props.onClose()
         props.fetchData()

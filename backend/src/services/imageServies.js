@@ -1,5 +1,7 @@
 import cloudinary from "../middleware/upload";
 import db from "../models";
+import fs from 'fs';
+import path from 'path';
 
 const Upload = async (file) => {
   try {
@@ -49,6 +51,61 @@ const getImages = async () => {
   }
 };
 
+
+const UploadImageToCloudinary = async (filePath) => {
+  try {
+    const result = await cloudinary.uploader.upload(filePath);
+    return result.secure_url;
+  } catch (error) {
+    console.error('Error uploading image to Cloudinary:', error);
+    throw error;
+  }
+};
+
+const UpdateImage = async (imageId, newImageUrl) => {
+  try {
+    const image = await db.Images.findByPk(imageId);
+    if (!image) {
+      throw new Error('Image not found');
+    }
+
+    const oldUrl = image.URL;
+
+    // Delete old image from Cloudinary
+    const publicId = getPublicIdFromUrl(oldUrl);
+    await cloudinary.uploader.destroy(publicId);
+
+    // Delete old image file from server directory
+    const oldImagePath = path.join(__dirname, '../uploads', oldUrl);
+    console.log(oldImagePath);
+    if (!fs.existsSync(oldImagePath)) {
+      fs.unlink(oldImagePath, (err) => {
+        if (err) {
+          console.error('Error deleting old image file:', err);
+        } else {
+          console.log('Old image file deleted successfully');
+        }
+      });
+    }
+
+    // Update image URL in the database
+    image.URL = newImageUrl;
+    await image.save();
+
+    return image;
+  } catch (error) {
+    console.error('Error updating image:', error);
+    throw new Error('Failed to update image');
+  }
+};
+
+const getPublicIdFromUrl = (url) => {
+  const parts = url.split('/');
+  const fileName = parts[parts.length - 1];
+  const publicId = fileName.split('.')[0];
+  return publicId;
+};
+
 module.exports = {
-  CreateImage,getImages
+  CreateImage,getImages,UpdateImage,UploadImageToCloudinary
 };

@@ -7,10 +7,18 @@ const Image = () => {
   const [show, SetShow] = useState(false);
   const [image, setImage] = useState([]);
 
+  const [page, setPage] = useState(1);
+  const [pageSize,setPageSize] = useState(3);
+  const [totalPages, setTotalPages] = useState(0);
+
+
   const fetchImage = async () => {
-    const respone = await GetImage();
+    const respone = await GetImage(page,pageSize);
+   // console.log(respone.data.images.totalImages);
+   //console.log(respone.data.images.images);
     if (respone && respone.data && respone.data.EC === 0) {
-      setImage(respone.data.DT);
+      setImage(respone.data.images.images);
+      setTotalPages(Math.ceil(respone.data.images.totalImages / pageSize));
     } else {
       toast.error(respone.data.EM);
     }
@@ -18,7 +26,7 @@ const Image = () => {
 
   useEffect(() => {
     fetchImage();
-  }, []);
+  }, [page,pageSize]);
   const handleShow = () => {
     SetShow(true);
   };
@@ -77,7 +85,7 @@ const Image = () => {
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    URL
+                    ID
                   </th>
                   <th
                     scope="col"
@@ -103,7 +111,7 @@ const Image = () => {
                             {index + 1}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                          {item.URL.length > 30 ? `${item.URL.substring(0, 30)}...` : item.URL}
+                          {item.URL.length > 30 ? `${item.id.substring(0, 30)}...` : item.id}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <img
@@ -164,6 +172,7 @@ const Image = () => {
             <div className="flex items-center gap-4 p-5 float-end">
               <div className="flex items-center gap-4">
                 <button
+                disabled={page === 1} onClick={() => setPage(prevPage => prevPage - 1)}
                   className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                   type="button"
                 >
@@ -185,14 +194,20 @@ const Image = () => {
                   Previous
                 </button>
                 <div className="flex items-center gap-2">
+                {Array.from({ length: totalPages }, (_, index) => (
                   <button
-                    class="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg bg-gray-900 text-center align-middle font-sans text-xs font-medium uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-slate-400 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  key={index}
+                  onClick={() => setPage(index + 1)}
+                 
+                    className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg bg-gray-900 text-center align-middle font-sans text-xs font-medium uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-slate-400 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                     type="button"
                   >
-                    <span class="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"></span>
+                    <span class="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">{index+1}</span>
                   </button>
+                ))}
                 </div>
                 <button
+                disabled={page === totalPages} onClick={() => setPage(prevPage => prevPage + 1)}
                   className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                   type="button"
                 >
@@ -214,6 +229,7 @@ const Image = () => {
                   </svg>
                 </button>
               </div>
+              <span>Page {page} of {totalPages}</span>
             </div>
           </div>
         </div>

@@ -46,17 +46,49 @@ const CreateImage = async (req, res) => {
   }
 };
 
-const listImages = async (req, res) => {
+const updateImageById = async (req, res) => {
   try {
-    const images = await imageServies.getImages();
+    const { id } = req.params;
+    const file = req.file;
+
+    // Check if ID or file is missing
+    if (!id || !file) {
+      return res.status(400).json({
+        error: 'ID or file is missing',
+      });
+    }
+
+    // Upload new image to Cloudinary
+    const newImageUrl = await imageServies.UploadImageToCloudinary(file.path);
+
+    // Update image URL in the database
+    const updatedImage = await imageServies.UpdateImage(id, newImageUrl);
+
+    // Respond with success message
     return res.status(200).json({
-      success: images.EM,
-      EC:images.EC,
-      DT:images.images
+      success: 'Image updated successfully',
+      image: updatedImage,
     });
   } catch (error) {
-    console.error('Error listing images:', error);
-    return res.status(500).json({ error: 'Failed to list images' });
+    console.error('Error updating image:', error);
+    return res.status(500).json({ error: 'Failed to update image' });
+  }
+};
+
+const listImages = async (req, res) => {
+  try {
+    const page = req.query.page || 1;
+    const pageSize = req.query.pageSize || 10;
+    const images = await imageServies.getImages(+page, +pageSize);
+    return res.status(200).json({
+      success: "Get image success !",
+      images,
+      EC: 0,
+      DT: images.totalImages,
+    });
+  } catch (error) {
+    console.error("Error listing images:", error);
+    return res.status(500).json({ error: "Failed to list images" });
   }
 };
 
@@ -77,5 +109,5 @@ async function findDuplicatedImages(urls) {
 
 
 module.exports = {
-  CreateImage,listImages
+  CreateImage,listImages,updateImageById
 };

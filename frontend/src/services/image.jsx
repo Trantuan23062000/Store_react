@@ -5,6 +5,6 @@ export const CreateImage = async (formData) => {
     formData
   );
 };
-export const GetImage = async () => {
-  return await axios.get("http://localhost:8000/api/v1/image/getImage");
+export const GetImage = async (page,pageSize) => {
+  return await axios.get(`http://localhost:8000/api/v1/image/getImage/?page=${page}&pageSize=${pageSize}`);
 };
