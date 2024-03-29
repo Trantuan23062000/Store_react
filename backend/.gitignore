@@ -5,11 +5,11 @@
 /.pnp
 .pnp.js
 
+/src/uploads
 
 
 # testing
 /coverage
-
 # production
 /build
 

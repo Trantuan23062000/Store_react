@@ -6,9 +6,11 @@ import toast from "react-hot-toast";
 const Image = () => {
   const [show, SetShow] = useState(false);
   const [image, setImage] = useState([]);
+  const[action,setAction] = useState('CREATE')
+  const [data,setData] = useState({})
 
   const [page, setPage] = useState(1);
-  const [pageSize,setPageSize] = useState(3);
+  const [pageSize] = useState(3);
   const [totalPages, setTotalPages] = useState(0);
 
 
@@ -17,6 +19,7 @@ const Image = () => {
    // console.log(respone.data.images.totalImages);
    //console.log(respone.data.images.images);
     if (respone && respone.data && respone.data.EC === 0) {
+      //console.log(respone);
       setImage(respone.data.images.images);
       setTotalPages(Math.ceil(respone.data.images.totalImages / pageSize));
     } else {
@@ -26,18 +29,28 @@ const Image = () => {
 
   useEffect(() => {
     fetchImage();
+    // eslint-disable-next-line
   }, [page,pageSize]);
+
   const handleShow = () => {
     SetShow(true);
   };
 
   const handleClose = () => {
     SetShow(false);
+    setData({})
+    
   };
+
+  const handleEdit = (image) =>{
+    setData(image)
+    SetShow(true)
+    setAction("UPDATE")
+  }
 
   return (
     <div>
-      {show ? <Form onClose={handleClose} onShow={handleShow} fetchData = {fetchImage} /> : null}
+      {show ? <Form onClose={handleClose} data={data} onShow={handleShow} fetchData = {fetchImage} action={action} /> : null}
       <div>
         <div className=" p-6 mb-1 bg-gray-200 min-h-48 m-24 items-center rounded-lg shadow-md">
           <div className="flex justify-between">
@@ -49,7 +62,7 @@ const Image = () => {
               />
             </div>
             <button
-              onClick={() => handleShow()}
+              onClick={() => {SetShow(true); setAction("CREATE")}}
               type="button"
               className="py-2.5 px-5 me-2 mb-2"
             >
@@ -117,11 +130,11 @@ const Image = () => {
                             <img
                               class="rounded-lg w-20 h-20"
                               src={item.URL}
-                              alt="image description"
+                              alt=""
                             />
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <button type="button">
+                            <button type="button" onClick={()=>{handleEdit(item)}}>
                               <svg
                                 className="w-6 h-6 hover:text-amber-800 text-yellow-400 dark:text-white"
                                 aria-hidden="true"
@@ -199,7 +212,7 @@ const Image = () => {
                   key={index}
                   onClick={() => setPage(index + 1)}
                  
-                    className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg bg-gray-900 text-center align-middle font-sans text-xs font-medium uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-slate-400 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                    className="relative h-5 max-h-[40px] w-5 max-w-[40px] select-none rounded-full bg-gray-900 text-center align-middle font-sans text-xs font-medium uppercase text-white shadow-md shadow-gray-50 hover:bg-slate-100 hover:text-black transition-all hover:shadow-gray-200 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.5] active:bg-white focus:outline-none focus:ring focus:ring-yellow-600"
                     type="button"
                   >
                     <span class="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">{index+1}</span>
