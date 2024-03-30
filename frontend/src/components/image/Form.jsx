@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { CreateImage, EditImage } from "../../services/image";
+import { CreateImage } from "../../services/image";
 
 const Form = (props) => {
+  const { action } = props;
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [formData, setFormData] = useState({});
-  const [maxFiles, setMaxFiles] = useState(1);
+  const [maxFiles, setMaxFiles] = useState(5);
 
   const isImage = (file) => {
     const acceptedImageTypes = ["image/jpeg", "image/png", "image/gif"];
@@ -18,77 +18,32 @@ const Form = (props) => {
     setSelectedFiles(updatedFiles);
   };
 
-  const HandleFileChange = (event) => {
+  const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
-    const invalidFiles = [];
     const fileSizeLimit = 5 * 1024 * 1024;
 
-    // Tính số lượng tệp mới có thể thêm vào
+    const selectableFiles = files.filter((file) => {
+      if (!isImage(file)) {
+        toast.error(`${file.name} is not an image`);
+        return false;
+      } else if (file.size > fileSizeLimit) {
+        toast.error(`${file.name} exceeds the size limit (5MB)`);
+        return false;
+      }
+      return true;
+    });
+
     const remainingSlots = 5 - selectedFiles.length;
-
-    // Lấy tệp mới có thể thêm vào (tối đa là remainingSlots)
-    const selectableFiles = files.slice(0, remainingSlots);
-
-    if (props.action === "CREATE") {
-      if (selectedFiles.length + files.length > 5) {
-        toast.error("You can only select up to 5 files.");
-        return;
-      }
+    if (selectableFiles.length > remainingSlots) {
+      toast.error("You can only select up to 5 files.");
+      return;
     }
-    const newSelectedFiles = [...selectedFiles];
-    files.forEach((file) => {
-      if (!isImage(file)) {
-        toast.error(`${file.name} is not an image`);
-      } else if (file.size > fileSizeLimit) {
-        toast.error(`${file.name} exceeds the size limit (5MB)`);
-      } else {
-        newSelectedFiles.push(file);
-      }
-    });
 
-    selectableFiles.forEach((file) => {
-      if (!isImage(file)) {
-        toast.error(`${file.name} is not an image`);
-      } else if (file.size > fileSizeLimit) {
-        toast.error(`${file.name} exceeds the size limit (5MB)`);
-      } else {
-        // Thêm tệp mới vào danh sách đã chọn
-        setSelectedFiles((prevSelectedFiles) => [...prevSelectedFiles, file]);
-      }
-    });
-
-    if (invalidFiles.length > 0) {
-      invalidFiles.forEach((file) => {
-        if (!isImage(file)) {
-          toast.error(`${file.name} is not an image`);
-        } else {
-          toast.error(`${file.name} exceeds the size limit (5MB)`);
-        }
-      });
-    } else {
-      const remainingSlots =
-        props.action === "CREATE" ? 5 - selectedFiles.length : 1;
-      const selectableFiles = files.slice(0, remainingSlots);
-
-      const selectedFileNames = selectedFiles.map((file) => file.name);
-
-      const uniqueFiles = selectableFiles.filter(
-        (file) => !selectedFileNames.includes(file.name)
-      );
-
-      setSelectedFiles([...selectedFiles, ...uniqueFiles]);
-    }
+    setSelectedFiles((prevSelectedFiles) => [
+      ...prevSelectedFiles,
+      ...selectableFiles,
+    ]);
   };
-
-  useEffect(() => {
-    if (props.action === "UPDATE" && props.data && props.data.URL) {
-      setSelectedFiles([props.data.URL]);
-    } else {
-      setSelectedFiles([]);
-    }
-    setFormData(props.data || {});
-    setMaxFiles(props.action === "UPDATE" ? 1 : 5);
-  }, [props.action, props.data]);
 
   const handleSubmit = async () => {
     if (selectedFiles.length === 0) {
@@ -103,6 +58,7 @@ const Form = (props) => {
 
     try {
       const response = await CreateImage(formData);
+      console.log(response);
       if (response && response.data && response.data.EC === 0) {
         toast.success(response.data.success);
         props.onClose();
@@ -128,7 +84,7 @@ const Form = (props) => {
             alt={`Image ${index}`}
             width="200"
           />
-          {props.action === "CREATE" && (
+          {action === "CREATE" && (
             <button
               className="absolute top-2 right-2 p-1"
               onClick={() => handleRemoveImage(index)}
@@ -163,7 +119,7 @@ const Form = (props) => {
             <div className="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
               <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {props.action === "CREATE" ? "CREATE IMAGE" : "EDIT IMAGE"}
+                 Create image
                 </h3>
                 <button
                   onClick={props.onClose}
@@ -201,7 +157,7 @@ const Form = (props) => {
                     </label>
                     <input
                       multiple
-                      onChange={HandleFileChange}
+                      onChange={handleFileChange}
                       type="file"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Brand..."
@@ -224,7 +180,7 @@ const Form = (props) => {
                   type="submit"
                   className="text-blue-600 hover:text-white border border-blue-800 hover:bg-blue-600   focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-10 py-4 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
                 >
-                  {props.action === "CREATE" ? "UPLOAD" : "UPDATE"}
+                  UPLOAD
                 </button>
               </div>
             </div>

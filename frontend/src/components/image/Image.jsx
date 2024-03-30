@@ -2,22 +2,22 @@ import React, { useEffect, useState } from "react";
 import Form from "./Form";
 import { GetImage } from "../../services/image";
 import toast from "react-hot-toast";
+import FormEdit from "./EditForm";
 
 const Image = () => {
   const [show, SetShow] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
   const [image, setImage] = useState([]);
-  const[action,setAction] = useState('CREATE')
-  const [data,setData] = useState({})
+  const [data, setData] = useState({});
 
   const [page, setPage] = useState(1);
   const [pageSize] = useState(3);
   const [totalPages, setTotalPages] = useState(0);
 
-
   const fetchImage = async () => {
-    const respone = await GetImage(page,pageSize);
-   // console.log(respone.data.images.totalImages);
-   //console.log(respone.data.images.images);
+    const respone = await GetImage(page, pageSize);
+    // console.log(respone.data.images.totalImages);
+    //console.log(respone.data.images.images);
     if (respone && respone.data && respone.data.EC === 0) {
       //console.log(respone);
       setImage(respone.data.images.images);
@@ -30,7 +30,7 @@ const Image = () => {
   useEffect(() => {
     fetchImage();
     // eslint-disable-next-line
-  }, [page,pageSize]);
+  }, [page, pageSize]);
 
   const handleShow = () => {
     SetShow(true);
@@ -38,19 +38,39 @@ const Image = () => {
 
   const handleClose = () => {
     SetShow(false);
-    setData({})
-    
+    setData({});
   };
 
-  const handleEdit = (image) =>{
-    setData(image)
-    SetShow(true)
-    setAction("UPDATE")
-  }
+  const handleShowEdit = () => {
+    setShowEdit(true);
+  };
+
+  const handleCloseEdit = () => {
+    setShowEdit(false);
+  };
+
+  const handleEdit = (image) => {
+    setData(image);
+    setShowEdit(true);
+  };
 
   return (
     <div>
-      {show ? <Form onClose={handleClose} data={data} onShow={handleShow} fetchData = {fetchImage} action={action} /> : null}
+      {show ? (
+        <Form
+          onClose={handleClose}
+          onShow={handleShow}
+          fetchData={fetchImage}
+        />
+      ) : null}
+      {showEdit ? (
+        <FormEdit
+          onClose={handleCloseEdit}
+          onShow={handleShowEdit}
+          data={data}
+        />
+      ) : null}
+
       <div>
         <div className=" p-6 mb-1 bg-gray-200 min-h-48 m-24 items-center rounded-lg shadow-md">
           <div className="flex justify-between">
@@ -62,7 +82,9 @@ const Image = () => {
               />
             </div>
             <button
-              onClick={() => {SetShow(true); setAction("CREATE")}}
+              onClick={() => {
+                handleShow();
+              }}
               type="button"
               className="py-2.5 px-5 me-2 mb-2"
             >
@@ -124,7 +146,9 @@ const Image = () => {
                             {index + 1}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                          {item.URL.length > 30 ? `${item.id.substring(0, 30)}...` : item.id}
+                            {item.URL.length > 30
+                              ? `${item.id.substring(0, 30)}...`
+                              : item.id}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <img
@@ -134,7 +158,12 @@ const Image = () => {
                             />
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <button type="button" onClick={()=>{handleEdit(item)}}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleEdit(item);
+                              }}
+                            >
                               <svg
                                 className="w-6 h-6 hover:text-amber-800 text-yellow-400 dark:text-white"
                                 aria-hidden="true"
@@ -185,7 +214,8 @@ const Image = () => {
             <div className="flex items-center gap-4 p-5 float-end">
               <div className="flex items-center gap-4">
                 <button
-                disabled={page === 1} onClick={() => setPage(prevPage => prevPage - 1)}
+                  disabled={page === 1}
+                  onClick={() => setPage((prevPage) => prevPage - 1)}
                   className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                   type="button"
                 >
@@ -207,20 +237,22 @@ const Image = () => {
                   Previous
                 </button>
                 <div className="flex items-center gap-2">
-                {Array.from({ length: totalPages }, (_, index) => (
-                  <button
-                  key={index}
-                  onClick={() => setPage(index + 1)}
-                 
-                    className="relative h-5 max-h-[40px] w-5 max-w-[40px] select-none rounded-full bg-gray-900 text-center align-middle font-sans text-xs font-medium uppercase text-white shadow-md shadow-gray-50 hover:bg-slate-100 hover:text-black transition-all hover:shadow-gray-200 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.5] active:bg-white focus:outline-none focus:ring focus:ring-yellow-600"
-                    type="button"
-                  >
-                    <span class="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">{index+1}</span>
-                  </button>
-                ))}
+                  {Array.from({ length: totalPages }, (_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setPage(index + 1)}
+                      className="relative h-5 max-h-[40px] w-5 max-w-[40px] select-none rounded-full bg-gray-900 text-center align-middle font-sans text-xs font-medium uppercase text-white shadow-md shadow-gray-50 hover:bg-slate-100 hover:text-black transition-all hover:shadow-gray-200 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.5] active:bg-white focus:outline-none focus:ring focus:ring-yellow-600"
+                      type="button"
+                    >
+                      <span class="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+                        {index + 1}
+                      </span>
+                    </button>
+                  ))}
                 </div>
                 <button
-                disabled={page === totalPages} onClick={() => setPage(prevPage => prevPage + 1)}
+                  disabled={page === totalPages}
+                  onClick={() => setPage((prevPage) => prevPage + 1)}
                   className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                   type="button"
                 >
@@ -242,7 +274,9 @@ const Image = () => {
                   </svg>
                 </button>
               </div>
-              <span>Page {page} of {totalPages}</span>
+              <span>
+                Page {page} of {totalPages}
+              </span>
             </div>
           </div>
         </div>

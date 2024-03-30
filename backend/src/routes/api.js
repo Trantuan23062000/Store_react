@@ -3,7 +3,9 @@ import multer from "multer"
 import HomeController from "../controller/home_controller";
 import BrandController from "../controller/brandController";
 import ProductController from "../controller/product_controller";
-import ImageController from "../controller/image_controller"
+import Create from "../controller/images/create"
+import Getlist from "../controller/images/getlist"
+import Update from "../controller/images/update"
 
 
 const router = express.Router();
@@ -33,9 +35,9 @@ const ApiRouter = (app) => {
   router.delete("/product/delete/:id",ProductController.deleteProduct)
   router.get("/product/search",ProductController.Search)
   
-  router.post("/image/create",upload.array('images',10),ImageController.CreateImage)
-  router.get("/image/getImage",ImageController.listImages)
-  router.put("/image/update/:id",upload.single('images'),ImageController.updateImageById)
+  router.post("/image/create",upload.array('images',10),Create.CreateImage)
+  router.get("/image/getImage",Getlist.listImages)
+  router.put("/image/update/:id",upload.single('images'),Update.updateImageById)
 
   
   router.get("/home", HomeController.handleHello);
