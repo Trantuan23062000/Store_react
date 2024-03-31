@@ -5,15 +5,26 @@ import { EditImage } from "../../services/image";
 const FormEdit = (props) => {
   const { data } = props;
   const [selectedFile, setSelectedFile] = useState(null);
+  const [oldImage, setOldImage] = useState(null); // Biến trạng thái để lưu trữ ảnh cũ
+  const [imageUrl, setImageUrl] = useState(null); 
 
   useEffect(() => {
     if (data && data.URL) {
-      setSelectedFile(data.URL);
+      setOldImage(data.URL); // Cập nhật ảnh cũ khi component được render
     }
   }, [data]);
 
+  const isImage = (file) => {
+    const acceptedImageTypes = ["image/jpeg", "image/png", "image/gif"];
+    return acceptedImageTypes.includes(file.type);
+  };
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
+    if (!isImage(file)) {
+      toast.error("Selected file is not an image");
+      return;
+    }
     setSelectedFile(file);
   };
 
@@ -22,23 +33,21 @@ const FormEdit = (props) => {
       toast.error("Please select an image!");
       return;
     }
-
-    if (!data || !data.id) {
-      toast.error("Invalid ID!");
-      return;
-    }
-
+    console.log(selectedFile);
     const formData = new FormData();
-    formData.append("id", data.id);
-    formData.append("image", selectedFile);
+    formData.append("images", selectedFile);
 
     try {
-      const response = await EditImage(formData);
-      console.log(response);
+      const response = await EditImage(data.id, formData);
+      //console.log(response);
       if (response && response.data && response.data.EC === 0) {
         toast.success(response.data.success);
         props.onClose();
-        props.fetchData();
+        setImageUrl(response.data.newImageUrl);
+        setTimeout(() => {
+          window.location.reload(); // Reload trang sau 0.5 giây
+        }, 200);
+       
       } else {
         toast.error(response.data.error);
         props.onShow();
@@ -80,20 +89,19 @@ const FormEdit = (props) => {
                 </button>
               </div>
 
-              <div className="flex items-center justify-center w-full">
-                {selectedFile && (
+              <div className="relative inline-block w-full max-w-screen-sm">
+                {(selectedFile || oldImage) && ( // Hiển thị ảnh cũ nếu không có ảnh mới được chọn
                   <div className="relative inline-block">
                     <img
-                      className="h-auto max-w-full rounded-lg"
-                      src={selectedFile instanceof File ? URL.createObjectURL(selectedFile) : selectedFile}
+                      className="rounded-lg w-full"
+                      src={selectedFile ? URL.createObjectURL(selectedFile) : oldImage}
                       alt="Selected Image"
                       width="200"
-                      onError={() => setSelectedFile(null)} // Handle error loading image
+                      height="400"
                     />
                   </div>
                 )}
               </div>
-
               <div className="grid gap-4 mb-4 sm:grid-cols-1">
                 <div>
                   <label
@@ -104,8 +112,10 @@ const FormEdit = (props) => {
                   </label>
                   <input
                     onChange={handleFileChange}
+                    accept="image/*"
                     type="file"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    placeholder="Image"
                   />
                 </div>
               </div>
@@ -121,7 +131,7 @@ const FormEdit = (props) => {
                 <button
                   onClick={handleSubmit}
                   type="submit"
-                  className="text-blue-600 hover:text-white border border-blue-800 hover:bg-blue-600   focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-10 py-4 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
+                  className="text-blue-600 hover:text-white border border-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-10 py-4 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
                 >
                   UPDATE
                 </button>

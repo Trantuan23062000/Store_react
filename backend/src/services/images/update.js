@@ -1,5 +1,5 @@
 import cloudinary from "../../middleware/upload";
-import db from "../../models/index";
+import db from "../../models/";
 
 const Upload = async (file) => {
   try {

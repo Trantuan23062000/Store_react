@@ -1,4 +1,5 @@
 import db from "../../models/index";
+import { Op } from "sequelize";
 
 const getImages = async (page, pageSize) => {
   try {
@@ -16,4 +17,28 @@ const getImages = async (page, pageSize) => {
     throw error;
   }
 };
-module.exports = { getImages };
+
+const SearchImage = async (id) => {
+  try {
+    let image = await db.Images.findAll({
+      where: {
+        id: {
+          [Op.like]: `%${id}%`,
+        },
+      },
+    });
+    return {
+      EM: "Data search....",
+      EC: 0,
+      image,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Server Errrorrr...",
+      EC: -1,
+      DT: "",
+    };
+  }
+};
+module.exports = { getImages,SearchImage };

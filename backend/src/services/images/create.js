@@ -25,7 +25,7 @@ const CreateImage = async (fileData) => {
     if (imageExists) {
       throw new Error("Image already exists!");
     }
-    const images = await db.Images.create({ URL: imageURL });
+    const images = await db.Images.create({ URL: imageURL});
     //console.log(images);
     return images;
   } catch (error) {

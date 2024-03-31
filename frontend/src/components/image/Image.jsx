@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Form from "./Form";
-import { GetImage } from "../../services/image";
+import { DeleteImage, GetImage,SearchImage } from "../../services/image";
 import toast from "react-hot-toast";
 import FormEdit from "./EditForm";
+import DeteteModal from "./Delete";
 
 const Image = () => {
   const [show, SetShow] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [showDelete,setShowDelete] = useState(false)
   const [image, setImage] = useState([]);
-  const [data, setData] = useState({});
-
+  const [data, setData] = useState({}); 
+  const [key,setKey] = useState('')
   const [page, setPage] = useState(1);
   const [pageSize] = useState(3);
   const [totalPages, setTotalPages] = useState(0);
@@ -22,15 +24,44 @@ const Image = () => {
       //console.log(respone);
       setImage(respone.data.images.images);
       setTotalPages(Math.ceil(respone.data.images.totalImages / pageSize));
+      
     } else {
       toast.error(respone.data.EM);
     }
   };
+  
+
+  const fetchSearch = async() =>{
+    if (key !== "") {
+      try {
+        const res = await SearchImage(key);
+        setImage(res.data.DT)
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      setImage([]);
+    }
+  }
+
+  const cofirmModalDelete = async () => {
+    let response = await DeleteImage(data.id);
+     if(response && response.data && response.data.EC ===0){
+      toast.success(response.data.message)
+      fetchImage()
+      setShowDelete(false)
+     }else{
+      toast.error("Delete Error !")
+      setShowDelete(false)
+     }
+
+  }
 
   useEffect(() => {
     fetchImage();
     // eslint-disable-next-line
-  }, [page, pageSize]);
+    fetchSearch()
+  }, [page, pageSize,key]);
 
   const handleShow = () => {
     SetShow(true);
@@ -49,10 +80,23 @@ const Image = () => {
     setShowEdit(false);
   };
 
+  const handleShowDelete = () =>{
+    setShowDelete(true)
+  }
+
+  const handleCloseDelete = () =>{
+    setShowDelete(false)
+  }
+
   const handleEdit = (image) => {
     setData(image);
     setShowEdit(true);
   };
+
+  const handleDelete = (image) =>{
+    setData(image)
+    setShowDelete(true)
+  }
 
   return (
     <div>
@@ -71,16 +115,22 @@ const Image = () => {
         />
       ) : null}
 
+      {showDelete ?(<DeteteModal onShow={handleShowDelete} onClose ={handleCloseDelete} data={data} onCofirm = {cofirmModalDelete}/>):null}
+
       <div>
         <div className=" p-6 mb-1 bg-gray-200 min-h-48 m-24 items-center rounded-lg shadow-md">
           <div className="flex justify-between">
+            
             <div className="">
               <input
+              value={key}
+              onChange={(e) => setKey(e.target.value)}
                 type="text"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 mx-12 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 placeholder="Search...  "
               />
             </div>
+            
             <button
               onClick={() => {
                 handleShow();
@@ -182,7 +232,7 @@ const Image = () => {
                                 />
                               </svg>
                             </button>
-                            <button type="button">
+                            <button type="button" onClick={()=>handleDelete(item)}>
                               <svg
                                 className="w-6 h-6 hover:text-red-800 text-red-500 dark:text-white"
                                 aria-hidden="true"

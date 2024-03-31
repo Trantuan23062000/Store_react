@@ -12,12 +12,14 @@ const updateImageById = async (req, res) => {
       });
     }
 
+
     // Update image URL in the database and delete old image from Cloudinary
     const updatedImage = await UpdateImageSer.UpdateImage(id, file);
 
     // Respond with success message
     return res.status(200).json({
       success: 'Image updated successfully',
+      EC:0,
       image: updatedImage,
     });
   } catch (error) {

@@ -6,6 +6,7 @@ import ProductController from "../controller/product_controller";
 import Create from "../controller/images/create"
 import Getlist from "../controller/images/getlist"
 import Update from "../controller/images/update"
+import Delete from "../controller/images/delete"
 
 
 const router = express.Router();
@@ -34,10 +35,13 @@ const ApiRouter = (app) => {
   router.put("/product/update",ProductController.UpdateProduct)
   router.delete("/product/delete/:id",ProductController.deleteProduct)
   router.get("/product/search",ProductController.Search)
-  
+
+  //Images
   router.post("/image/create",upload.array('images',10),Create.CreateImage)
   router.get("/image/getImage",Getlist.listImages)
   router.put("/image/update/:id",upload.single('images'),Update.updateImageById)
+  router.delete("/image/delete/:id",Delete.DeleteImage)
+  router.get("/image/search",Getlist.Search)
 
   
   router.get("/home", HomeController.handleHello);

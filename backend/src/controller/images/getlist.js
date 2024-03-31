@@ -16,6 +16,27 @@ const listImages = async (req, res) => {
     }
   };
 
+  const Search = async (req, res) => {
+    try {
+      const { id } = req.query;
+      const image = await GetList.SearchImage(id);
+        return res.status(200).json({
+          EM: image.EM,
+          EC: image.EC,
+          DT: image.image
+        })
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({
+        EM:image.EM,
+        EC:image.EC,
+        DT:[]
+      })
+    }
+  };
+
+
+
 module.exports = {
-    listImages
+    listImages,Search
 }
