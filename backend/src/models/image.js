@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Image.belongsTo(models.Products);
     }
   }
   Image.init({
@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV4 
     },
     URL: DataTypes.STRING,
+    productId: DataTypes.UUID
   }, {
     sequelize,
     modelName: 'Images',

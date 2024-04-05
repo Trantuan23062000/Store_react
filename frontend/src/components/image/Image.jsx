@@ -45,15 +45,21 @@ const Image = () => {
   }
 
   const cofirmModalDelete = async () => {
-    let response = await DeleteImage(data.id);
-     if(response && response.data && response.data.EC ===0){
-      toast.success(response.data.message)
-      fetchImage()
-      setShowDelete(false)
-     }else{
-      toast.error("Delete Error !")
-      setShowDelete(false)
-     }
+    try {
+      let response = await DeleteImage(data.id);
+      if (response && response.data && response.data.EC === 0) {
+        toast.success(response.data.message);
+        fetchImage();
+        setShowDelete(false);
+      } else {
+        toast.error("Delete Error !");
+        setShowDelete(false);
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      toast.error("Delete Error !");
+      setShowDelete(false);
+    }
 
   }
 

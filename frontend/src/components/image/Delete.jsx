@@ -1,6 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 const DeteteModal = (props) => {
+   useEffect(()=>{
+     console.log(props.data)
+   },[])
+
+
+
+
   return (
     <div>
       <div className="overflow-x-hidden p-60 justify-center overflow-y-auto fixed inset-0 z-50 items-center">

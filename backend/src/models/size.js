@@ -15,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
   }
   Size.init({
     name: DataTypes.STRING,
-    productId: DataTypes.UUID
   }, {
     sequelize,
     modelName: 'Sizes',
