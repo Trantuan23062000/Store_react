@@ -8,7 +8,7 @@ import Getlist from "../controller/images/getlist"
 import Update from "../controller/images/update"
 import Delete from "../controller/images/delete"
 
-import CreateImage from "../controller/product/create"
+import productController from "../controller/product/create"
 
 
 const router = express.Router();
@@ -48,9 +48,8 @@ const ApiRouter = (app) => {
 
   //productImage
 
-  router.post("/productImage/create",CreateImage.CreateImages)
+  router.post("/productImage/create",upload.array('images',10),productController.addProduct)
 
-  
   router.get("/home", HomeController.handleHello);
   return app.use("/api/v1", router);
 };
