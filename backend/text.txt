@@ -2,3 +2,6 @@ npx sequelize model:generate --name OrderDetail --attributes name:string,orderId
 npx sequelize-cli db:migrate
 
 npx sequelize-cli model:generate --name imageProduct --attributes name:string,description:string,price:decimal,quantity:integer
+
+
+npx sequelize-cli model:generate --name ProductImage --attributes productId:UUID,imageId:UUID

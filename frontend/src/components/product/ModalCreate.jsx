@@ -6,7 +6,7 @@ import { UpdateProduct } from "../../services/product";
 
 const ModalCreate = (props) => {
   const [dataBrand, setDataBrand] = useState({});
-  const [brandGroup,setBrandGroup] = useState([])
+  const [brandGroup, setBrandGroup] = useState([]);
   const dataProduct = {
     name: "",
     description: "",
@@ -57,22 +57,28 @@ const ModalCreate = (props) => {
   const handleSubmit = async () => {
     let check = checkInput();
     if (check === true) {
-      let response = action === "CREATE"?  await CreateProduct({
-        ...data,
-        brandId: data["brand"],
-      }):await UpdateProduct({
-        ...data,
-        brandId: data["brand"],
-      }) 
-      if(response.data && response.data.EC === 0){
-        props.onClose()
-         setData({...data,brand:brandGroup && brandGroup.length>0?brandGroup[0].id:''})
+      let response =
+        action === "CREATE"
+          ? await CreateProduct({
+              ...data,
+              brandId: data["brand"],
+            })
+          : await UpdateProduct({
+              ...data,
+              brandId: data["brand"],
+            });
+      if (response.data && response.data.EC === 0) {
+        props.onClose();
+        setData({
+          ...data,
+          brand: brandGroup && brandGroup.length > 0 ? brandGroup[0].id : "",
+        });
       }
       if (response.data && response.data.EC !== 0) {
         let _valid = _.cloneDeep(valid);
         _valid[response.data.DT] = false;
         setValid(_valid);
-        props.onShow()
+        props.onShow();
         toast.error(response.data.EM);
       } else {
         toast.success(response.data.EM);
@@ -87,14 +93,18 @@ const ModalCreate = (props) => {
     if (response && response.data && response.data.EC === 0) {
       setDataBrand(response.data.DT);
       //console.log(response.data.DT);
+      console.log(response.data.DT);
     }
   };
   useEffect(() => {
     if (action === "UPDATE") {
-      setData({ ...dataPr,brand:dataPr.brandId, brand: dataPr.Brand.name ? dataPr.Brand.id : "" })
+      setData({
+        ...dataPr,
+        brand: dataPr.brandId,
+        brand: dataPr.Brand.name ? dataPr.Brand.id : "",
+      });
     }
     //console.log({brand:dataPr.brandId});
-
     fectchBrand();
     // eslint-disable-next-line
     //console.log(data);
@@ -144,18 +154,22 @@ const ModalCreate = (props) => {
                     Name
                   </label>
                   <input
-                    disabled={action === 'CREATE'?false:true}
+                    disabled={action === "CREATE" ? false : true}
                     value={data.name}
                     onChange={(event) =>
-                      handleChangeInput(event.target.value, "name") || ''
+                      handleChangeInput(event.target.value, "name") || ""
                     }
                     type="text"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     placeholder="Name product..."
                   />
-                  {action === "UPDATE" ? <span className="align-center text-red-500 m-2 p-1">No edit name</span> :null}
+                  {action === "UPDATE" ? (
+                    <span className="align-center text-red-500 m-2 p-1">
+                      No edit name
+                    </span>
+                  ) : null}
                 </div>
-               
+
                 <div>
                   <label
                     htmlFor="description"
@@ -246,6 +260,7 @@ const ModalCreate = (props) => {
                       }
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     >
+                       <option selected>Choose a brand</option>
                       {dataBrand &&
                         dataBrand.length > 0 &&
                         dataBrand.map((item, index) => {
@@ -253,7 +268,9 @@ const ModalCreate = (props) => {
                             <option
                               key={`group-${index}`}
                               value={item.id}
-                              selected
+                              // Nếu item.id là giá trị bạn muốn chọn mặc định,
+                              // hãy thêm thuộc tính selected vào option
+                              selected={index === 0} // Chọn giá trị đầu tiên trong mảng
                             >
                               {item.name}
                             </option>

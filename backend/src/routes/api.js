@@ -8,6 +8,8 @@ import Getlist from "../controller/images/getlist"
 import Update from "../controller/images/update"
 import Delete from "../controller/images/delete"
 
+import CreateImage from "../controller/product/create"
+
 
 const router = express.Router();
 const upload = multer({ dest: 'src/uploads/',
@@ -42,6 +44,11 @@ const ApiRouter = (app) => {
   router.put("/image/update/:id",upload.single('images'),Update.updateImageById)
   router.delete("/image/delete/:id",Delete.DeleteImage)
   router.get("/image/search",Getlist.Search)
+
+
+  //productImage
+
+  router.post("/productImage/create",CreateImage.CreateImages)
 
   
   router.get("/home", HomeController.handleHello);

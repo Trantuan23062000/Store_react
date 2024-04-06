@@ -113,6 +113,8 @@ const getListProduct = async (req, res) => {
 };
 
 
+
+
 const UpdateProduct = async (req, res) => {
   try {
     const data = await productServiecs.updateProduct(req.body);

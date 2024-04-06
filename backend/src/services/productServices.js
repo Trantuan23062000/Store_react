@@ -217,6 +217,15 @@ const getProductPagition = async(page,limit) =>{
 
 }
 
+const getListProduct =async () =>{
+    const data = await db.Products.findAll()
+    return {
+      EM: "OK",
+      EC: 0,
+      DT: data,
+    }
+}
+
 const deleteProduct = async (productId) => {
   try {
     const product = await db.Products.findByPk(productId);
@@ -265,5 +274,5 @@ module.exports = {
   createProduct,
   getProduct,
   getBrand,
-  updateProduct,deleteProduct,getProductPagition,SearchProduct
+  updateProduct,deleteProduct,getProductPagition,SearchProduct,getListProduct
 };

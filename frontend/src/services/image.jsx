@@ -21,3 +21,6 @@ export const SearchImage = async(id) =>{
   return await axios.get(`http://localhost:8000/api/v1/image/search/?id=${id}`)
 }
 
+export const getProduct = (page,limit) =>{
+  return axios.get("http://localhost:8000/api/v1/product/getProduct")
+}

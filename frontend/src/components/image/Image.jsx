@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Form from "./Form";
-import { DeleteImage, GetImage,SearchImage } from "../../services/image";
+import { DeleteImage, GetImage,SearchImage,getProduct } from "../../services/image";
 import toast from "react-hot-toast";
 import FormEdit from "./EditForm";
 import DeteteModal from "./Delete";
@@ -15,6 +15,8 @@ const Image = () => {
   const [page, setPage] = useState(1);
   const [pageSize] = useState(3);
   const [totalPages, setTotalPages] = useState(0);
+  const [pr,setPr] = useState({})
+  
 
   const fetchImage = async () => {
     const respone = await GetImage(page, pageSize);
@@ -29,6 +31,12 @@ const Image = () => {
       toast.error(respone.data.EM);
     }
   };
+
+  const fectctProduct = async()=>{
+    const response = await getProduct()
+    setPr(response.data.DT)
+   
+  }
   
 
   const fetchSearch = async() =>{
@@ -67,6 +75,7 @@ const Image = () => {
     fetchImage();
     // eslint-disable-next-line
     fetchSearch()
+    fectctProduct()
   }, [page, pageSize,key]);
 
   const handleShow = () => {
