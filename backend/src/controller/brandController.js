@@ -55,7 +55,7 @@ const GetListBrand = async (req, res) => {
       res.status(200).json({
         EM: data.EM, //error message
         EC: data.EC, //error code
-        DT: data.DT,
+        DT: data.data,
       });
     }
   } catch (error) {

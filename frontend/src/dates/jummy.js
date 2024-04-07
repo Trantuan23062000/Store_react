@@ -32,6 +32,12 @@ export let Data = [
                 text: 'Feedbacks',
                 url: 'main'
             },
+            {
+                icon: 'fa-brands fa-figma',
+                text: 'ProductImage',
+                url: 'productimage'
+            },
+
         ]
     },
     {
