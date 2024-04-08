@@ -86,8 +86,9 @@ const ModalCreate = (props) => {
     dataSened.append("brandId", formData.brandId);
 
     const response = await CreateProductImage(dataSened);
+    console.log(response);
     if(response && response.data && response.data.EC === 0){
-      toast.success(response.data.success)
+      toast.success(response.data.message)
       props.close()
     }else{
       toast.error(response.data.error)
@@ -133,9 +134,9 @@ const ModalCreate = (props) => {
 
               <div>
                 <div className="flex items-center justify-center"></div>
-                <div className="grid gap-6 mb-6 md:grid-cols-2">
+                <div className="grid gap-6 mb-4 md:grid-cols-3">
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    <label className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
                       Name Product
                     </label>
                     <input
@@ -147,7 +148,7 @@ const ModalCreate = (props) => {
                     />
                   </div>
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    <label className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
                       Price
                     </label>
                     <input
@@ -159,7 +160,7 @@ const ModalCreate = (props) => {
                     />
                   </div>
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    <label className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
                       Quantity
                     </label>
                     <input
@@ -173,7 +174,7 @@ const ModalCreate = (props) => {
                   <div>
                     <label
                       for="phone"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      className="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
                     >
                       Category
                     </label>
@@ -193,7 +194,7 @@ const ModalCreate = (props) => {
                   <div>
                     <label
                       for="phone"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      className="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
                     >
                       Brand
                     </label>
@@ -213,7 +214,7 @@ const ModalCreate = (props) => {
                     </select>
                   </div>
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    <label className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
                       Image
                     </label>
                     <input
@@ -226,7 +227,7 @@ const ModalCreate = (props) => {
                     />
                   </div>
                 </div>
-                <div className="grid gap-4 mb-4 sm:grid-cols-1">
+                <div className="grid gap-4 mb-1 sm:grid-cols-1">
                   <div className="flex items-center justify-center w-full">
                     {formData.imagePreviews.map((preview, index) => (
                       <div key={index} className="relative">
@@ -265,7 +266,7 @@ const ModalCreate = (props) => {
                 </div>
                 <div className="grid gap-4 mb-4 sm:grid-cols-1">
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Your message
+                    Description
                   </label>
                   <textarea
                     onChange={(e) => HandleChangeInput(e)}
@@ -276,11 +277,11 @@ const ModalCreate = (props) => {
                   ></textarea>
                 </div>
               </div>
-              <div className="flex flex-row-reverse p-5">
+              <div className="flex flex-row-reverse p-1">
                 <button
                   onClick={props.close}
                   type="button"
-                  className="text-red-500 hover:text-white border border-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-10 py-4 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
+                  className="text-red-500 hover:text-white border border-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-6 py-2 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
                 >
                   Close
                 </button>
@@ -289,7 +290,7 @@ const ModalCreate = (props) => {
                     HandleSubmit();
                   }}
                   type="submit"
-                  className="text-blue-600 hover:text-white border border-blue-800 hover:bg-blue-600   focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-10 py-4 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
+                  className="text-blue-600 hover:text-white border border-blue-800 hover:bg-blue-600   focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-6 py-2 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
                 >
                   UPLOAD
                 </button>

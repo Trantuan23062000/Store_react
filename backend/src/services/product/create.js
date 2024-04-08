@@ -6,9 +6,11 @@ const createProduct = async (
   quantity,
   category,
   brandId,
-  imageIds
+  imageId
 ) => {
+
   try {
+
     const product = await db.Products.create({
       name,
       description,
@@ -17,21 +19,18 @@ const createProduct = async (
       category,
       brandId,
     });
-    const productImages = await Promise.all(
-      imageIds.map(async (imageId) => {
-        const productImage = await db.ProductImage.create({
-          productId: product.id,
-          imageId,
-        });
-        return productImage;
-      })
-    );
-    return { product, productImages };
+
+    // Thêm ID sản phẩm và ID hình ảnh vào bảng ProductImage
+    const productImage = await db.ProductImage.create({
+      productId: product.id,
+      imageId,
+    });
+
+    return { 
+      product, productImage};
   } catch (error) {
     throw error;
   }
 };
-
-
 
 module.exports = { createProduct };

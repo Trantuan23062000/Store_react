@@ -15,80 +15,52 @@ const productSchema = Joi.object({
 
 const addProduct = async (req, res, next) => {
   try {
-    // Validate request body
-
     const { error: validationError, value } = productSchema.validate(req.body);
     if (validationError) {
-      return res
-        .status(201)
-        .json({ EC: 1, error: validationError.details[0].message });
+      return res.status(201).json({ EC: 1, error: validationError.details[0].message });
     }
-
     const { name, description, price, quantity, category, brandId } = value;
     const files = req.files;
 
-    if (!files || files.length === 0) {
-      return res
-        .status(201)
-        .json({ EC: 1, error: "Please upload at least one image." });
+    const existingProduct = await db.Products.findOne({ where: { name } });
+    if (existingProduct) {
+      return res.status(201).json({EC:1,error:"Name productImage exits"})
     }
+
+    if (!files || files.length === 0) {
+      return res.status(201).json({ EC: 1, error: "Please upload at least one image." });
+    }
+
 
     if (files.length > 3) {
-      return res
-        .status(201)
-        .json({
-          EC: 1,
-          error: "You can only upload up to 3 images at a time.",
-        });
+      return res.status(201).json({ EC: 1, error: "You can only upload up to 3 images at a time." });
     }
 
-    const uploadedImageUrls = [];
-    const imageIds = [];
-    for (const file of files) {
-      // Upload image to Cloudinary
-      const imageUrl = await uploadImage(file);
+    // Upload ảnh và lấy ID của bản ghi Image
+    const imageId = await uploadImage(files);
 
-      // Check if the uploaded image URL already exists
-      if (uploadedImageUrls.includes(imageUrl)) {
-        return res.status(400).json({ error: "Duplicate images detected." });
-      }
-      uploadedImageUrls.push(imageUrl);
-
-      // Save image URL to database and get image ID
-      const imageId = await saveImageToDatabase(imageUrl);
-      imageIds.push(imageId);
-    }
-
-    const { product, productImages } = await createProduct(
+    // Tạo sản phẩm và liên kết với hình ảnh
+    const { product, productImage } = await createProduct(
       name,
       description,
       price,
       quantity,
       category,
       brandId,
-      imageIds
+      imageId
     );
 
     res.status(200).json({
       success: true,
       data: {
         product,
-        productImages,
+        productImage,
       },
-      success: "Product added successfully.",
+      message: "Product added successfully.",
       EC: 0,
     });
   } catch (error) {
     next(error);
-  }
-};
-
-const saveImageToDatabase = async (imageUrl) => {
-  try {
-    const newImage = await db.Images.create({ URL: imageUrl });
-    return newImage.id;
-  } catch (error) {
-    throw error;
   }
 };
 
