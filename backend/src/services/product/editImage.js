@@ -38,15 +38,19 @@ const updateImage = async (id, imageData, files) => {
       })
     );
 
+    // Xoá tất cả URL cũ từ cơ sở dữ liệu
+    await image.update({ URL: null });
+
     // Tạo mảng để lưu các URL mới của các ảnh
+    const newImageURLs = [];
     for (const file of files) {
       const result = await cloudinary.uploader.upload(file.path);
       const imageURL = result.secure_url;
-      imageURLs.push(imageURL);
+      newImageURLs.push(imageURL);
     }
 
     // Cập nhật URL ảnh mới vào cơ sở dữ liệu
-    await image.update({ URL: JSON.stringify(imageURLs) })
+    await image.update({ URL: JSON.stringify(newImageURLs) })
 
     return image;
   } catch (error) {

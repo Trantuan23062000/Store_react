@@ -11,6 +11,7 @@ import Delete from "../controller/images/delete"
 import productController from "../controller/product/create"
 import GetController from "../controller/product/getList"
 import UpdateproductImage from "../controller/product/editImage"
+import UpdateProduct from "../controller/product/editProduct"
 
 
 const router = express.Router();
@@ -53,6 +54,8 @@ const ApiRouter = (app) => {
   router.post("/productImage/create",upload.array('images',10),productController.addProduct)
   router.get("/productImage",GetController.GetImageProduct)
   router.put("/productImage/updateImage/:id",upload.array('images',10),UpdateproductImage.updateProduct)
+  router.put("/productImage/updateProduct/:id",UpdateProduct.updateProductController)
+
 
 
   router.get("/home", HomeController.handleHello);
