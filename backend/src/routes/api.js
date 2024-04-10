@@ -9,9 +9,11 @@ import Update from "../controller/images/update"
 import Delete from "../controller/images/delete"
 
 import productController from "../controller/product/create"
-import GetController from "../controller/product/getList"
 import UpdateproductImage from "../controller/product/editImage"
 import UpdateProduct from "../controller/product/editProduct"
+import UpdateProductImag from "../controller/product/updateProductImage"
+import ProductGetList from "../controller/product/getList"
+
 
 
 const router = express.Router();
@@ -52,14 +54,16 @@ const ApiRouter = (app) => {
   //productImage
 
   router.post("/productImage/create",upload.array('images',10),productController.addProduct)
-  router.get("/productImage",GetController.GetImageProduct)
   router.put("/productImage/updateImage/:id",upload.array('images',10),UpdateproductImage.updateProduct)
   router.put("/productImage/updateProduct/:id",UpdateProduct.updateProductController)
+  router.put("/productImage/update/:id",upload.array('images',10),UpdateProductImag.updateProducts)
+  router.get("/productImage/getList",ProductGetList.GetList)
 
 
 
   router.get("/home", HomeController.handleHello);
   return app.use("/api/v1", router);
+
 };
 
 export default ApiRouter;

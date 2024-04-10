@@ -1,19 +1,22 @@
-import {GetList} from "../../services/product/getList"
+import ProductServiecs from "../../services/product/getList"
 
-const GetImageProduct = async (req,res) =>{
-    const data = await GetList()
-    if(data){
+const GetList = async (req,res) =>{
+    const Product = await ProductServiecs.GetList()
+    if(Product){
         res.status(200).json({
-            message:"Get data",
+            Product,
             EC:0,
-            data:data
+            success:"Product get list !"
         })
     }else{
         res.status(201).json({
-            message:"Get data Eror",
+            Product:[],
             EC:1,
-            data:[]
+            error:"Product get list Error !"
         })
     }
 }
-module.exports = {GetImageProduct}
+
+module.exports = {
+    GetList
+}

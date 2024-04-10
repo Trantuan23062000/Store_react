@@ -1,4 +1,5 @@
 import db from "../../models";
+import {validateProduct} from "../product/validate"
 
 const updateProduct = async (productId, newData) => {
   try {
@@ -6,7 +7,7 @@ const updateProduct = async (productId, newData) => {
     if (!productId) {
       throw new Error('Product ID is required');
     }
-
+    await validateProduct(newData)
     // Lấy thông tin sản phẩm từ cơ sở dữ liệu
     const product = await db.Products.findByPk(productId);
 

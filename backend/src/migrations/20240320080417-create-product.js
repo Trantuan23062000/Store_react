@@ -27,6 +27,9 @@ module.exports = {
       brandId: {
         type: Sequelize.UUID
       },
+      imageId: {
+        type: Sequelize.UUID
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

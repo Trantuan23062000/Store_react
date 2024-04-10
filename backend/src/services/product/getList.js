@@ -1,17 +1,19 @@
-import db from "../../models/index"
+import db from "../../models";
+
 
 const GetList = async () =>{
-    const iamgeProduct = await db.ProductImage.findAll({
+    const product = await db.Products.findAll({
         include: [
-            { model: db.Products, 
-              attributes: ["id", "name", "description", "price", "quantity", "category"],
-              include: { model: db.Brands, attributes: ["id", "name"] }
-            },
-            { model: db.Images, attributes: ["id", "URL"] }
-        ]
+            { model: db.Images, attributes: ["id", "URL"] },
+            { model: db.Brands, attributes: ["id", "name"] }
+        ],
+        order: [["id", "DESC"]],
+        nest: true,
     })
-   const data = {iamgeProduct}
-   return data
+
+    return product
 }
 
-module.exports = {GetList}
+module.exports = {
+    GetList
+}

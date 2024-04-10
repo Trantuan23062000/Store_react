@@ -22,10 +22,10 @@ const addProduct = async (req, res, next) => {
     const { name, description, price, quantity, category, brandId } = value;
     const files = req.files;
 
-    const existingProduct = await db.Products.findOne({ where: { name } });
-    if (existingProduct) {
-      return res.status(201).json({EC:1,error:"Name productImage exits"})
-    }
+    // const existingProduct = await db.Products.findOne({ where: { name } });
+    // if (existingProduct) {
+    //   return res.status(201).json({EC:1,error:"Name productImage exits"})
+    // }
 
     if (!files || files.length === 0) {
       return res.status(201).json({ EC: 1, error: "Please upload at least one image." });
@@ -40,7 +40,7 @@ const addProduct = async (req, res, next) => {
     const imageId = await uploadImage(files);
 
     // Tạo sản phẩm và liên kết với hình ảnh
-    const { product, productImage } = await createProduct(
+    const { product } = await createProduct(
       name,
       description,
       price,
@@ -54,7 +54,7 @@ const addProduct = async (req, res, next) => {
       success: true,
       data: {
         product,
-        productImage,
+        
       },
       message: "Product added successfully.",
       EC: 0,

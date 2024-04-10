@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from "react";
 import ModalCreate from "./ModalCreate";
 import { GetListProduct } from "../../services/productImage";
+import ModalEdit from "./ModalEdit";
 
 const ProductImage = () => {
   const [product, setProduct] = useState([]);
-
+  const [data,setData] = useState({})
   const [show, setShow] = useState(false);
+  const [showEdit , setShowEdit] = useState(false)
 
   const fetchData = async () => {
     const response = await GetListProduct();
     if (response && response.data && response.data.EC === 0) {
-      setProduct(response.data.data.iamgeProduct);
-      console.log(response.data.data.iamgeProduct);
+     //console.log(response.data.Product);
+     setProduct(response.data.Product)
     }
   };
   useEffect(() => {
     fetchData();
+    
   }, []);
 
   const handleShow = () => {
@@ -26,19 +29,25 @@ const ProductImage = () => {
     setShow(false);
   };
 
-  let uniqueProducts = [];
-  if (Array.isArray(product) && product.length > 0) {
-    // Lọc ra sản phẩm duy nhất
-    uniqueProducts = Array.from(
-      new Set(product.map((item) => item.Product.id))
-    ).map((productId) => {
-      return product.find((item) => item.Product.id === productId);
-    });
+  const HandleShowEdit = () =>{
+    setShowEdit(true)
   }
+
+  const HandleCloseEdit = () =>{
+    setShowEdit(false)
+  }
+
+  const handleEdit = (product) =>{
+    setData(product)
+    setShowEdit(true)
+   
+  }
+
 
   return (
     <div>
       {show ? <ModalCreate show={handleShow} close={handleClose} /> : null}
+      {showEdit ? <ModalEdit show={HandleShowEdit} close={HandleCloseEdit} data={data} /> : null}
       <div className="p-6 px-0">
         <div className="flex justify-between">
           <div className="">
@@ -83,9 +92,9 @@ const ProductImage = () => {
             </tr>
           </thead>
           <tbody>
-            {uniqueProducts && uniqueProducts.length > 0 ? (
-              uniqueProducts.map((item, index) => (
-                <tr key={item.Product.id}>
+            {product && product.length > 0 ? (
+              product.map((item, index) => (
+                <tr key={item.id}>
                   <td className="p-4 border-blue-gray-50">
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col">
@@ -99,47 +108,44 @@ const ProductImage = () => {
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col">
                         <p className="block antialiased font-sans text-sm leading-normal text-blue-gray-900 font-normal">
-                          {item.Product.name}
+                          {item.name}
                         </p>
                       </div>
                     </div>
                   </td>
                   <td className="p-4 flex">
-                      {item.Image && item.Image.URL ? (
-                        JSON.parse(item.Image.URL).map((url, index) => (
-                          <img
-                            key={index}
-                            src={url}
-                            alt={`Product ${item.Product.id} Image ${index}`}
-                            style={{
-                              width: "30px",
-                              height: "auto",
-                              margin: "1px",
-                            }}
-                          />
-                        ))
-                      ) : (
-                        <p>No image available</p>
-                      )}
+                    {item.Image && item.Image.URL ? (
+                      JSON.parse(item.Image.URL).map((url, index) => (
+                        <img
+                          key={index}
+                          src={url}
+                          alt={`Product ${item.id} Image ${index}`}
+                          style={{
+                            width: "30px",
+                            height: "auto",
+                            margin: "1px",
+                          }}
+                        />
+                      ))
+                    ) : (
+                      <p>No image available</p>
+                    )}
                   </td>
                   <td className="p-4">
                     <div className="w-max">
-                    {item.Product.price.toLocaleString("en-US", {
-                            style: "currency",
-                            currency: "USD",
-                          })}
+                      {item.price.toLocaleString("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      })}
                     </div>
                   </td>
+                  <td className="p-4">{item.quantity}</td>
+                  <td className="p-4">{item.Brand.name}</td>
                   <td className="p-4">
-                   
-                     {item.Product.quantity}
-                    
-                  </td>
-                  <td className="p-4">
-                    {item.Product.Brand.name}
-                  </td>
-                  <td className="p-4">
-                    <button type="button">
+                    <button
+                      onClick={() => handleEdit(item)}
+                      type="button"
+                    >
                       <svg
                         className="w-6 h-6 hover:text-amber-800 text-yellow-400 dark:text-white"
                         aria-hidden="true"

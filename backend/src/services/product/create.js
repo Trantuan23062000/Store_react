@@ -18,16 +18,12 @@ const createProduct = async (
       quantity,
       category,
       brandId,
+      imageId
     });
 
-    // Thêm ID sản phẩm và ID hình ảnh vào bảng ProductImage
-    const productImage = await db.ProductImage.create({
-      productId: product.id,
-      imageId,
-    });
 
     return { 
-      product, productImage};
+      product};
   } catch (error) {
     throw error;
   }
