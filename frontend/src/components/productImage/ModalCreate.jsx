@@ -87,13 +87,13 @@ const ModalCreate = (props) => {
     console.log(dataSened);
     const response = await CreateProductImage(dataSened);
     //console.log(response);
-    if(response && response.data && response.data.EC === 0){
-      toast.success(response.data.message)
-      props.close()
-      props.fetchData()
-    }else{
-      toast.error(response.data.error)
-      props.show()
+    if (response && response.data && response.data.EC === 0) {
+      toast.success(response.data.message);
+      props.close();
+      props.fetch();
+    } else {
+      toast.error(response.data.error);
+      props.show();
     }
   };
 

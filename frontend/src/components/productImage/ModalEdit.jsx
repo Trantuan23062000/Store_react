@@ -122,19 +122,20 @@ const ModalEdit = (props) => {
     formDataToSend.append("brandId", formData.brandId);
     formDataToSend.append("imageId", formData.imageId);
     formDataToSend.append("description", formData.description);
-
-    // Thêm hình ảnh vào formDataToSend
+    
+   // Kiểm tra xem có hình ảnh nào mới được chọn không
+   if (formData.images.length > 0) {
+    // Nếu có hình ảnh mới được chọn, thêm chúng vào formDataToSend
     formData.images.forEach((image) => {
       formDataToSend.append("images", image);
     });
+  }
+    
     const response = await UpdateProduct(props.data.id, formDataToSend);
     if (response && response.EC === 0) {
       toast.success(response.message);
       props.close()
       props.fetch()
-      setTimeout(() => {
-        window.location.reload(); // Reload trang sau 0.5 giây
-      }, 1000);
     } else {
       props.show()
       toast.error(response.error)
@@ -211,7 +212,7 @@ const ModalEdit = (props) => {
                       </label>
                       <input
                         onChange={handleChangeInput}
-                        value={formData.price}
+                        value={formData.quantity}
                         type="text"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Quantity"

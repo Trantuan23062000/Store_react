@@ -28,7 +28,12 @@ module.exports = {
         type: Sequelize.UUID
       },
       imageId: {
-        type: Sequelize.UUID
+        type: Sequelize.UUID,
+        references: {
+          model: 'Images', // Tên bảng mà imageId đề cập đến
+          key: 'id' // Tên cột trong bảng Images
+        },
+        onDelete: 'CASCADE' // Quy tắc xử lý khi xóa: Xoá các hình ảnh tương ứng khi sản phẩm bị xoá
       },
       createdAt: {
         allowNull: false,

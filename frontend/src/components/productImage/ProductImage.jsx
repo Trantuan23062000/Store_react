@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import ModalCreate from "./ModalCreate";
 import { GetListProduct } from "../../services/productImage";
 import ModalEdit from "./ModalEdit";
+import ModalDelete from "./modalDelete";
 
 const ProductImage = () => {
   const [product, setProduct] = useState([]);
   const [data,setData] = useState({})
   const [show, setShow] = useState(false);
   const [showEdit , setShowEdit] = useState(false)
+  const [ShowDelete,setShowDelete] = useState(false)
 
   const fetchData = async () => {
     const response = await GetListProduct();
@@ -43,11 +45,26 @@ const ProductImage = () => {
    
   }
 
+  const handleShowDelete = () =>{
+    setShowDelete(true)
+  }
+
+  const handleCloseDelete = () =>{
+    setShowDelete(false)
+  }
+  
+
+  const Delete = (product) =>{
+      setData(product)
+      setShowDelete(true)
+  }
+
 
   return (
     <div>
       {show ? <ModalCreate show={handleShow} close={handleClose} fetch={fetchData} /> : null}
       {showEdit ? <ModalEdit show={HandleShowEdit} close={HandleCloseEdit} data={data} fetch={fetchData} /> : null}
+      {ShowDelete ? <ModalDelete show={handleShowDelete} close={handleCloseDelete} data={data} fetch={fetchData} /> : null}
       <div className="p-6 px-0">
         <div className="flex justify-between">
           <div className="">
@@ -164,7 +181,7 @@ const ProductImage = () => {
                         />
                       </svg>
                     </button>
-                    <button type="button">
+                    <button  onClick={() => Delete(item)} type="button">
                       <svg
                         className="w-6 h-6 hover:text-red-800 text-red-500 dark:text-white"
                         aria-hidden="true"

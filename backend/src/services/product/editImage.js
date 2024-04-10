@@ -1,7 +1,7 @@
 import db from "../../models";
 import cloudinary from "../../middleware/upload";
 
-const updateImage = async (id, imageData, files) => {
+const updateImage = async (id, files) => {
   try {
     // Lấy thông tin hình ảnh từ cơ sở dữ liệu
     const image = await db.Images.findByPk(id);

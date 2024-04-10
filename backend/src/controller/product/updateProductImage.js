@@ -1,4 +1,5 @@
 import Joi from "joi";
+import db from "../../models";
 import { updateProductAndImage } from "../../services/product/UpdateProductImage";
 
 // Schema for request body validation
@@ -23,8 +24,19 @@ const updateProducts = async (req, res) => {
     }
 
     const productId = req.params.id;
-    const newData = value; // Dữ liệu mới của sản phẩm từ client
-    const files = req.files; // Các file hình ảnh từ client
+    const newData = value
+    const files = req.files || []; // Lấy danh sách file gửi lên từ request
+
+    // Kiểm tra xem có file nào được gửi lên không
+    if (files.length === 0) {
+      // Nếu không có file nào được gửi lên, không thực hiện upload và trả về kết quả
+      const product = await db.Products.findByPk(productId);
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+     const products = await product.update(newData);
+      return res.status(200).json({products,EC:0, message: "Product updated successfully" });
+    }
 
     // Gọi hàm cập nhật sản phẩm và hình ảnh từ services
     const { product, image } = await updateProductAndImage(productId, newData, files);
