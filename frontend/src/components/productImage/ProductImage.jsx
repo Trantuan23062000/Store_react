@@ -46,8 +46,8 @@ const ProductImage = () => {
 
   return (
     <div>
-      {show ? <ModalCreate show={handleShow} close={handleClose} /> : null}
-      {showEdit ? <ModalEdit show={HandleShowEdit} close={HandleCloseEdit} data={data} /> : null}
+      {show ? <ModalCreate show={handleShow} close={handleClose} fetch={fetchData} /> : null}
+      {showEdit ? <ModalEdit show={HandleShowEdit} close={HandleCloseEdit} data={data} fetch={fetchData} /> : null}
       <div className="p-6 px-0">
         <div className="flex justify-between">
           <div className="">

@@ -14,3 +14,17 @@ export const CreateProductImage = async (formData) =>{
 export const GetListImage = async () =>{
    return await axios.get("http://localhost:8000/api/v1/image/getImage")
 }
+
+
+export const UpdateProduct = async (id, formData) => {
+    try {
+      const response = await axios.put(`http://localhost:8000/api/v1/productImage/update/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }

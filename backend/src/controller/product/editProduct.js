@@ -11,6 +11,7 @@ const updateProductController = async (req, res) => {
     // Trả về thông tin sản phẩm đã được cập nhật
     res.json(updatedProduct);
   } catch (error) {
+    console.log(error);
     // Trả về thông báo lỗi nếu có lỗi xảy ra
     res.status(400).json({ error: error.message });
   }

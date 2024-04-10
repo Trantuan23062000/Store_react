@@ -84,12 +84,13 @@ const ModalCreate = (props) => {
     dataSened.append("quantity", formData.quantity);
     dataSened.append("category", formData.category);
     dataSened.append("brandId", formData.brandId);
-
+    console.log(dataSened);
     const response = await CreateProductImage(dataSened);
-    console.log(response);
+    //console.log(response);
     if(response && response.data && response.data.EC === 0){
       toast.success(response.data.message)
       props.close()
+      props.fetchData()
     }else{
       toast.error(response.data.error)
       props.show()
@@ -134,7 +135,7 @@ const ModalCreate = (props) => {
 
               <div>
                 <div className="flex items-center justify-center"></div>
-                <div className="grid gap-6 mb-4 md:grid-cols-3">
+                <div className="grid gap-6 mb-6 md:grid-cols-2">
                   <div>
                     <label className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
                       Name Product
@@ -227,7 +228,7 @@ const ModalCreate = (props) => {
                     />
                   </div>
                 </div>
-                <div className="grid gap-4 mb-1 sm:grid-cols-1">
+                <div className="grid gap-4 mb-4 sm:grid-cols-1">
                   <div className="flex items-center justify-center w-full">
                     {formData.imagePreviews.map((preview, index) => (
                       <div key={index} className="relative">
@@ -266,7 +267,7 @@ const ModalCreate = (props) => {
                 </div>
                 <div className="grid gap-4 mb-4 sm:grid-cols-1">
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Description
+                    Your message
                   </label>
                   <textarea
                     onChange={(e) => HandleChangeInput(e)}
@@ -277,7 +278,7 @@ const ModalCreate = (props) => {
                   ></textarea>
                 </div>
               </div>
-              <div className="flex flex-row-reverse p-1">
+              <div className="flex flex-row-reverse p-5">
                 <button
                   onClick={props.close}
                   type="button"

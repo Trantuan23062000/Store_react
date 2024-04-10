@@ -19,7 +19,7 @@ const updateProducts = async (req, res) => {
 
     // If there is an error, send a 400 response with error message
     if (error) {
-      return res.status(400).json({ error: error.details[0].message });
+      return res.status(201).json({ error: error.details[0].message });
     }
 
     const productId = req.params.id;
@@ -30,7 +30,7 @@ const updateProducts = async (req, res) => {
     const { product, image } = await updateProductAndImage(productId, newData, files);
 
     // Trả về thông tin sản phẩm và hình ảnh đã được cập nhật
-    res.json({ product, image });
+    res.status(200).json({ EC:0 , message:"Update success !" ,product, image });
   } catch (error) {
     console.log(error);
     // Trả về thông báo lỗi nếu có lỗi xảy ra

@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { GetBrands, GetListImage } from "../../services/productImage";
+import {
+  GetBrands,
+  GetListImage,
+  UpdateProduct,
+} from "../../services/productImage";
 import toast from "react-hot-toast";
 
 const ModalEdit = (props) => {
-  const [formData, setFormData] = useState(props.data);
+  const [formData, setFormData] = useState({
+    ...props.data,
+    images: [],
+    imagePreviews: [],
+  });
   const [brand, setBrand] = useState({});
   const [images, setImages] = useState([]);
+  const [showInitialImages, setShowInitialImages] = useState(true); // State để kiểm soát việc hiển thị hình ảnh ban đầu
 
   const fetchBrand = async () => {
     const response = await GetBrands();
@@ -17,6 +26,14 @@ const ModalEdit = (props) => {
     }
   };
 
+  const handleChangeInput = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
   const fetchImage = async () => {
     const response = await GetListImage();
     if (response && response.data && response.data.EC === 0) {
@@ -26,35 +43,104 @@ const ModalEdit = (props) => {
     }
   };
 
-  // Lấy đường dẫn URL từ mảng lưu trong trường URL của bảng Image
-  const getImageUrl = (imageId) => {
-    const image = images.find((image) => image.id === imageId);
-    return image ? image.URL : null;
+  const handleImageChange = (e) => {
+    const selectedImages = Array.from(e.target.files);
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+    const maxSizeInBytes = 1e6; // 1MB
+    const validImages = [];
+    const invalidImages = [];
+
+    selectedImages.forEach((image) => {
+      if (allowedTypes.includes(image.type) && image.size <= maxSizeInBytes) {
+        validImages.push(image);
+      } else {
+        invalidImages.push(image);
+      }
+    });
+
+    if (selectedImages.length + formData.images.length > 3) {
+      toast.error("You can only select up to 3 images.");
+      return;
+    }
+
+    // Xử lý hình ảnh không hợp lệ
+    if (invalidImages.length > 0) {
+      toast.error("Some selected images are invalid or exceed 1MB in size.");
+      // Bạn có thể xử lý hình ảnh không hợp lệ theo cách cần thiết, chẳng hạn hiển thị thông báo lỗi.
+    }
+
+    // Xử lý hình ảnh hợp lệ
+    setFormData({
+      ...formData,
+      images: [...formData.images, ...validImages],
+      // Tạo các URL xem trước hình ảnh mới được chọn
+      imagePreviews: [
+        ...formData.imagePreviews,
+        ...validImages.map((image) => URL.createObjectURL(image)),
+      ],
+    });
+
+    setShowInitialImages(false);
   };
 
-  // Xoá hình ảnh từ mảng images và cập nhật lại URL
-  const removeImage = (index) => {
-    const newImages = [...images];
-    const removedImageUrl = newImages.splice(index, 1)[0].URL; // Xoá phần tử và lấy URL của phần tử bị xoá
-    setImages(newImages);
+  // Lấy đường dẫn URL từ mảng lưu trong trường URL của bảng Image
+  const getImageUrl = (imageId) => {
+    const image = images.find((img) => img.id === imageId);
+    return image && image.URL && image.URL.startsWith("blob:")
+      ? image.URL
+      : image
+      ? image.URL
+      : null;
+  };
 
-    // Cập nhật lại formData.imageId nếu phần tử bị xoá là phần tử được chọn
-    if (formData.imageId === index) {
-      const updatedImageUrl =
-        newImages.length > 0
-          ? JSON.stringify(newImages.map((image) => image.URL))
-          : null;
-      setFormData((prevData) => ({
-        ...prevData,
-        imageId: updatedImageUrl,
-      }));
-    }
+  // Xoá hình ảnh từ mảng images
+  const removeImage = (index) => {
+    const newImages = [...formData.images];
+    newImages.splice(index, 1);
+    setFormData({
+      ...formData,
+      images: newImages,
+      // Xoá URL xem trước ứng với hình ảnh bị xoá
+      imagePreviews: formData.imagePreviews.filter((_, i) => i !== index),
+    });
   };
 
   useEffect(() => {
     fetchImage();
     fetchBrand();
+    console.log(props.data);
   }, []);
+
+  const HandleSubmit = async () => {
+    // Tạo một FormData object
+    const formDataToSend = new FormData();
+    // Thêm các trường dữ liệu vào formDataToSend
+    formDataToSend.append("name", formData.name);
+    formDataToSend.append("price", formData.price);
+    formDataToSend.append("quantity", formData.quantity);
+    formDataToSend.append("category", formData.category);
+    formDataToSend.append("brandId", formData.brandId);
+    formDataToSend.append("imageId", formData.imageId);
+    formDataToSend.append("description", formData.description);
+
+    // Thêm hình ảnh vào formDataToSend
+    formData.images.forEach((image) => {
+      formDataToSend.append("images", image);
+    });
+    const response = await UpdateProduct(props.data.id, formDataToSend);
+    if (response && response.EC === 0) {
+      toast.success(response.message);
+      props.close()
+      props.fetch()
+      setTimeout(() => {
+        window.location.reload(); // Reload trang sau 0.5 giây
+      }, 1000);
+    } else {
+      props.show()
+      toast.error(response.error)
+    }
+  };
+
   return (
     <div>
       <div>
@@ -99,6 +185,7 @@ const ModalEdit = (props) => {
                       </label>
                       <input
                         value={formData.name}
+                        onChange={handleChangeInput}
                         type="text"
                         name="name"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -110,6 +197,7 @@ const ModalEdit = (props) => {
                         Price
                       </label>
                       <input
+                        onChange={handleChangeInput}
                         value={formData.price}
                         type="number"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -122,6 +210,7 @@ const ModalEdit = (props) => {
                         Quantity
                       </label>
                       <input
+                        onChange={handleChangeInput}
                         value={formData.price}
                         type="text"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -137,6 +226,7 @@ const ModalEdit = (props) => {
                         Category
                       </label>
                       <select
+                        onChange={handleChangeInput}
                         value={formData.category}
                         name="category"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -157,6 +247,7 @@ const ModalEdit = (props) => {
                         Brand
                       </label>
                       <select
+                        onChange={handleChangeInput}
                         value={formData.brandId}
                         name="brandId"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -176,6 +267,7 @@ const ModalEdit = (props) => {
                         Image
                       </label>
                       <input
+                        onChange={handleImageChange}
                         multiple
                         type="file"
                         accept="image/*"
@@ -186,7 +278,46 @@ const ModalEdit = (props) => {
                   </div>
                   <div className="grid gap-4 mb-1 sm:grid-cols-1">
                     <div className="flex items-center justify-center w-full">
-                      {typeof getImageUrl(formData.imageId) === "string" &&
+                      {formData.imagePreviews.map((url, index) => (
+                        <div key={index} className="relative">
+                          <img
+                            src={url}
+                            alt={`Image Preview ${index}`}
+                            style={{
+                              width: "150px",
+                              height: "150px",
+                              marginRight: "10px",
+                            }}
+                          />
+                          <button
+                            className="absolute top-2 right-2 p-1"
+                            onClick={() => removeImage(index)}
+                          >
+                            <svg
+                              className="w-6 h-6 hover:text-red-800 text-red-600 dark:text-white"
+                              aria-hidden="true"
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid gap-4 mb-1 sm:grid-cols-1">
+                    <div className="flex items-center justify-center w-full">
+                      {showInitialImages &&
+                        typeof getImageUrl(formData.imageId) === "string" &&
                         JSON.parse(getImageUrl(formData.imageId)).map(
                           (url, index) => (
                             <div key={index} className="relative">
@@ -199,26 +330,6 @@ const ModalEdit = (props) => {
                                   marginRight: "10px",
                                 }}
                               />
-                              <button
-                                className="absolute top-2 right-2 p-1"
-                                onClick={() => removeImage(index)}
-                              >
-                                <svg
-                                  className="w-6 h-6 hover:text-red-800 text-red-600 dark:text-white"
-                                  aria-hidden="true"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="24"
-                                  height="24"
-                                  fill="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                              </button>
                             </div>
                           )
                         )}
@@ -230,6 +341,8 @@ const ModalEdit = (props) => {
                       Description
                     </label>
                     <textarea
+                      onChange={handleChangeInput}
+                      value={formData.description}
                       rows="4"
                       className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="Write your thoughts here..."
@@ -248,6 +361,7 @@ const ModalEdit = (props) => {
                     Close
                   </button>
                   <button
+                    onClick={() => HandleSubmit()}
                     type="submit"
                     className="text-blue-600 hover:text-white border border-blue-800 hover:bg-blue-600   focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-6 py-2 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
                   >
