@@ -18,24 +18,14 @@ export let Data = [
                 url: 'main'
             },
             {
-                icon: 'fa-solid fa-regular fa-cart-shopping',
-                text: 'Order',
-                url: 'marketing'
-            },
-            {
-                icon: 'fa-solid fa-solid fa-square',
-                text: 'Product',
-                url: 'product'
-            },
-            {
-                icon: 'fa-regular fa-comment-dots',
-                text: 'Feedbacks',
-                url: 'main'
-            },
-            {
                 icon: 'fa-brands fa-figma',
                 text: 'ProductImage',
                 url: 'productimage'
+            },
+            {
+                icon: 'fa-brands fa-product-hunt',
+                text: 'productColorSize',
+                url: 'productColorSize'
             },
 
         ]

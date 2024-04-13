@@ -22,7 +22,6 @@ const updateProducts = async (req, res) => {
     if (error) {
       return res.status(201).json({ error: error.details[0].message });
     }
-
     const productId = req.params.id;
     const newData = value
     const files = req.files || []; // Lấy danh sách file gửi lên từ request

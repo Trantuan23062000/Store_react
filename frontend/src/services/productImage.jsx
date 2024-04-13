@@ -17,6 +17,8 @@ export const GetListImage = async () => {
   return await axios.get("http://localhost:8000/api/v1/image/getImage");
 };
 
+
+
 export const UpdateProduct = async (id, formData) => {
   try {
     const response = await axios.put(

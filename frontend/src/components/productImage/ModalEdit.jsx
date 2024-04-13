@@ -46,7 +46,7 @@ const ModalEdit = (props) => {
   const handleImageChange = (e) => {
     const selectedImages = Array.from(e.target.files);
     const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
-    const maxSizeInBytes = 1e6; // 1MB
+    const maxSizeInBytes = 2e6; // 1MB
     const validImages = [];
     const invalidImages = [];
 

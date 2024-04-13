@@ -1,5 +1,5 @@
 import React from 'react';
-import { cards } from '../../dates/jummy'
+import { cards } from '../../dates/main'
 const Sales = () => {
     return (
         <div className=" justify-start w-full items-start flex-wrap xl:flex-nowrap gap-4 inline-flex">

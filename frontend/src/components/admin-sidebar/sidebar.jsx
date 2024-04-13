@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { Context } from '../../context'
 import { Link } from 'react-router-dom'
-import { Data } from '../../dates/jummy'
+import { Data } from '../../dates/main'
 
 const Sidebar = () => {
     let [activeIcon, setActiveIcon] = useState('fa-solid fa-chart-pie')

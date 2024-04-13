@@ -2,7 +2,7 @@ import React from 'react'
 import Line from '../../components/charts/linechart/line'
 import Option from '../../components/options/option'
 import Bar from '../../components/charts/bar-graph/bar'
-import { dateCards } from '../../dates/jummy'
+import { dateCards } from '../../dates/main'
 import Sales from '../admin-sales/sales'
 
 const Main = () => {

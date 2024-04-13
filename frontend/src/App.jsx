@@ -5,11 +5,11 @@ import { useEffect } from "react";
 import { Toaster } from 'react-hot-toast';
 
 function App() {
-  const navigate = useNavigate()
-  useEffect(()=>{
-      navigate('/admin-dashboard/productimage')
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
+  // const navigate = useNavigate()
+  // useEffect(()=>{
+  //     navigate('/admin-dashboard/productimage')
+  //     // eslint-disable-next-line react-hooks/exhaustive-deps
+  // },[])
   return (
     <div className="h-screen w-full">
       <Toaster /> 

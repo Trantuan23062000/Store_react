@@ -1,19 +1,17 @@
 import express from "express";
 import multer from "multer";
-import HomeController from "../controller/home_controller";
-import BrandController from "../controller/brandController";
-import ProductController from "../controller/product_controller";
-import Create from "../controller/images/create";
+import BrandController from "../controller/brand/brandController";
 import Getlist from "../controller/images/getlist";
-import Update from "../controller/images/update";
-import Delete from "../controller/images/delete";
 
 import productController from "../controller/product/create";
-import UpdateproductImage from "../controller/product/editImage";
-import UpdateProduct from "../controller/product/editProduct";
 import UpdateProductImag from "../controller/product/updateProductImage";
 import ProductGetList from "../controller/product/getList";
-import DeleteImage from "../controller/product/delete"
+import DeleteImage from "../controller/product/delete";
+import createColorSize from "../controller/productSizeColor/create"
+import get from "../controller/productSizeColor/get"
+import getProduct from "../controller/productSizeColor/getProduct"
+import getVariant from "../controller/productSizeColor/getVariants"
+import getimage from "../controller/productSizeColor/getImageById"
 
 const router = express.Router();
 const upload = multer({
@@ -37,24 +35,17 @@ const ApiRouter = (app) => {
   router.delete("/brand/delete/:id", BrandController.DeleteBrand);
   router.get("/brand/search", BrandController.Search);
 
-  //Product
-  router.post("/product/create", ProductController.CreateProduct);
-  router.get("/product/getProduct", ProductController.getListProduct);
-  router.get("/product/getBrand", ProductController.getBrands);
-  router.put("/product/update", ProductController.UpdateProduct);
-  router.delete("/product/delete/:id", ProductController.deleteProduct);
-  router.get("/product/search", ProductController.Search);
-
   //Images
-  router.post("/image/create", upload.array("images", 10), Create.CreateImage);
   router.get("/image/getImage", Getlist.listImages);
-  router.put(
-    "/image/update/:id",
-    upload.single("images"),
-    Update.updateImageById
-  );
-  router.delete("/image/delete/:id", Delete.DeleteImage);
-  router.get("/image/search", Getlist.Search);
+
+  // productSizeColor
+  router.post("/productDetails/create",createColorSize.addProductDataController)
+  router.get("/productDetails/get",get.getProductDetailsController)
+  router.get("/product/get",getProduct.GetPorduct)
+  router.get("/variant/get",getVariant.getVariant)
+  router.get("/image/getById/:id",getimage.GetimageById)
+
+
 
   //productImage
 
@@ -63,27 +54,15 @@ const ApiRouter = (app) => {
     upload.array("images", 10),
     productController.addProduct
   );
-  router.put(
-    "/productImage/updateImage/:id",
-    upload.array("images", 10),
-    UpdateproductImage.updateProduct
-  );
-  router.put(
-    "/productImage/updateProduct/:id",
-    UpdateProduct.updateProductController
-  );
+
   router.put(
     "/productImage/update/:id",
     upload.array("images", 10),
     UpdateProductImag.updateProducts
   );
   router.get("/productImage/getList", ProductGetList.GetList);
-  router.delete(
-    "/productImage/delete/:id",
-    DeleteImage.deleteProduct
-  );
+  router.delete("/productImage/delete/:id", DeleteImage.deleteProduct);
 
-  router.get("/home", HomeController.handleHello);
   return app.use("/api/v1", router);
 };
 

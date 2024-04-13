@@ -15,7 +15,7 @@ const updateProductAndImage = async (productId, newData, files) => {
     await product.update(newData);
 
     // Lấy thông tin hình ảnh từ cơ sở dữ liệu dựa trên ImageId của sản phẩm
-    const image = await db.Images.findByPk(product.ImageId);
+    const image = await db.Images.findByPk(product.imageId);
 
     // Kiểm tra xem hình ảnh có tồn tại không
     if (!image) {

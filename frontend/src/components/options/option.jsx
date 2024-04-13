@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { multilocation, time } from '../../dates/jummy'
+import { multilocation, time } from '../../dates/main'
 
 const Options = () => {
     let [modalCountries, setModalCountries] = useState(false)

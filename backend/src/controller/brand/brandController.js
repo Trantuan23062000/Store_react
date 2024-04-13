@@ -1,4 +1,4 @@
-import BrandServices from "../services/brandServices";
+import BrandServices from "../../services/brand/brandServices";
 
 const Create = async (req, res) => {
   try {

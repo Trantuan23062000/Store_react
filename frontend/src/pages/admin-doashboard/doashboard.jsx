@@ -5,11 +5,10 @@ import Main from "../../components/admin-main/main";
 import { Context } from "../../context/index";
 //import Maketing from '../../components/admin-maketing/maketing'
 import { useParams } from "react-router-dom";
-import { Data } from "../../dates/jummy";
+import { Data } from "../../dates/main";
 import Brand from "../../components/brand/Brand";
-import Product from "../../components/product/product";
-import Image from "../../components/image/Image";
 import ProductImage from "../../components/productImage/ProductImage";
+import ProductDetails from "../../components/ProductDetail/productDetails";
 
 const AdminDashboard = () => {
   const { category } = useParams();
@@ -44,9 +43,10 @@ const AdminDashboard = () => {
         >
           {category === "main" && <Main />}
           {category === "brand" && <Brand />}
-          {category === "product" && <Product />}
-          {category === "image" && <Image />}
           {category === "productimage" && <ProductImage/>}
+          {category === "productColorSize" && <ProductDetails/>}
+
+          
         </div>
       </div>
     </div>
