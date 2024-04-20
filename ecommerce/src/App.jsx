@@ -1,10 +1,17 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./componets/layout/home";
-import Navbar from "./componets/navbar";
-import Footer from "./componets/footer";
-import Copy from "./componets/copy";
+import Footer from "./componets/home/footer";
+import Copy from "./componets/home/copy";
 import Shop from "./componets/layout/shop";
+import Product from "./componets/layout/product";
+import Cart from "./componets/shoppingcart/cart";
+import Order from "./componets/order/order";
+import Login from "./componets/auth/login";
+import Register from "./componets/auth/register";
+import Forgot from "./componets/auth/forgot";
+import Contact from "./componets/layout/contact";
+import Navbar from "./componets/home/navbar"
 
 function App() {
   return (
@@ -16,6 +23,13 @@ function App() {
             <Routes>
               <Route exact path="/" element={<Home />} />
               <Route exact path="/shop" element={<Shop />} />
+              <Route exact path="/product" element={<Product/>}/>
+              <Route exact path="/cart" element={<Cart/>}/>
+              <Route exact path="/checkout" element={<Order/>}/>
+              <Route exact path="/login" element={<Login/>}/>
+              <Route exact path="/register" element={<Register/>}/>
+              <Route exact path="/forgot-password" element={<Forgot/>}/>
+              <Route exact path="/contact" element={<Contact/>}/>
             </Routes>
           </div>
         </div>
