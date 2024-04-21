@@ -41,7 +41,7 @@ const AdminDashboard = () => {
               : ` ${state.toggleNavbar ? "md:ml-[90px]" : "ml-0"}`
           } overflow-auto w-full h-full z-12`}
         >
-          {category === "main" && <Main />}
+          {category === "home" && <Main />}
           {category === "brand" && <Brand />}
           {category === "productimage" && <ProductImage/>}
           {category === "productColorSize" && <ProductDetails/>}

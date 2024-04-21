@@ -3,8 +3,10 @@ import axios from "axios";
 export const GetBrands = async () => {
   return await axios.get("http://localhost:8000/api/v1/brand/getBrand");
 };
-export const GetListProduct = async () => {
-  return await axios.get("http://localhost:8000/api/v1/productImage/getList");
+export const GetListProduct = async (pageSize, pageNumber) => {
+  return await axios.get(
+    `http://localhost:8000/api/v1/productImage/getList/?pageSize=${pageSize}&pageNumber=${pageNumber}`
+  );
 };
 export const CreateProductImage = async (formData) => {
   return await axios.post(
@@ -16,8 +18,6 @@ export const CreateProductImage = async (formData) => {
 export const GetListImage = async () => {
   return await axios.get("http://localhost:8000/api/v1/image/getImage");
 };
-
-
 
 export const UpdateProduct = async (id, formData) => {
   try {
@@ -36,6 +36,14 @@ export const UpdateProduct = async (id, formData) => {
   }
 };
 
-export const DeleteProduct = async (id) =>{
-  return await axios.delete(`http://localhost:8000/api/v1/productImage/delete/${id}`)
-}
+export const DeleteProduct = async (id) => {
+  return await axios.delete(
+    `http://localhost:8000/api/v1/productImage/delete/${id}`
+  );
+};
+
+export const SearchProduct = (name) => {
+  return axios.get(
+    `http://localhost:8000/api/v1/productImage/search/?name=${name}`
+  );
+};

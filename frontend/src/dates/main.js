@@ -15,7 +15,7 @@ export let Data = [
             {
                 icon: 'fa-solid fa-light fa-house',
                 text: 'Home',
-                url: 'main'
+                url: 'home'
             },
             {
                 icon: 'fa-brands fa-figma',
@@ -27,6 +27,11 @@ export let Data = [
                 text: 'productColorSize',
                 url: 'productColorSize'
             },
+            {
+                icon: 'fa-solid fa-brands fa-algolia',
+                text: 'Brand',
+                url: 'brand'
+            },
 
         ]
     },
@@ -36,12 +41,12 @@ export let Data = [
             {
                 icon: 'fa-regular fa-solid fa-user',
                 text: 'User',
-                url: 'main'
+                url: 'home'
             },
             {
                 icon: 'fa-solid fa-users-gear',
                 text: 'Permision',
-                url: 'main'
+                url: 'home'
             },
         ]
     },
@@ -49,19 +54,14 @@ export let Data = [
         icon: 'fa-solid fa-duotone fa-box',
         inside: [
             {
-                icon: 'fa-solid fa-brands fa-algolia',
-                text: 'Brand',
-                url: 'brand'
-            },
-            {
                 icon: 'fa-solid fa-droplet',
                 text: 'Color',
-                url: 'main'
+                url: 'home'
             },
             {
                 icon: 'fa-solid fa-thin fa-ruler',
                 text: 'Size',
-                url: 'main'
+                url: 'home'
             },
             {
                 icon: 'fa-solid fa-solid fa-image',
@@ -76,17 +76,17 @@ export let Data = [
             {
                 icon: 'fa-solid fa-comments-dollar',
                 text: 'Business Summary',
-                url: 'main'
+                url: 'home'
             },
             {
                 icon: 'fa-regular fa-floppy-disk',
                 text: 'Saved Reports',
-                url: 'main'
+                url: 'home'
             },
             {
                 icon: 'fa-regular fa-comment-dots',
                 text: 'Feedbacks',
-                url: 'main'
+                url: 'home'
             },
         ]
     },
@@ -96,12 +96,12 @@ export let Data = [
             {
                 icon: 'fa-regular fa-floppy-disk',
                 text: 'Saved Reports',
-                url: 'main'
+                url: 'home'
             },
             {
                 icon: 'fa-regular fa-comment-dots',
                 text: 'Feedbacks',
-                url: 'main'
+                url: 'home'
             },
         ]
     }

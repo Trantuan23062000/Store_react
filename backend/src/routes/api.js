@@ -12,6 +12,11 @@ import get from "../controller/productSizeColor/get"
 import getProduct from "../controller/productSizeColor/getProduct"
 import getVariant from "../controller/productSizeColor/getVariants"
 import getimage from "../controller/productSizeColor/getImageById"
+import update from "../controller/productSizeColor/update"
+import DeleteDetails from "../controller/productSizeColor/delete"
+import Search from "../controller/product/search"
+import SearchDetails from "../controller/productSizeColor/seacrh"
+import product from "../controller/productSizeColor/getall"
 
 const router = express.Router();
 const upload = multer({
@@ -44,6 +49,12 @@ const ApiRouter = (app) => {
   router.get("/product/get",getProduct.GetPorduct)
   router.get("/variant/get",getVariant.getVariant)
   router.get("/image/getById/:id",getimage.GetimageById)
+  router.put("/productDetails/update/:detailId",update.updateProductDataController);
+  router.delete("/productDetails/delete/:detailId",DeleteDetails.Delete)
+  router.get("/productDetails/search",SearchDetails.searchProduct)
+
+  //getall
+  router.get("/productDetails/getall",product.GetAll);
 
 
 
@@ -62,6 +73,7 @@ const ApiRouter = (app) => {
   );
   router.get("/productImage/getList", ProductGetList.GetList);
   router.delete("/productImage/delete/:id", DeleteImage.deleteProduct);
+  router.get('/productImage/search',Search.SearchProductdata)
 
   return app.use("/api/v1", router);
 };

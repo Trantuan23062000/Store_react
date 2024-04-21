@@ -3,7 +3,7 @@ const createProduct = async (
   name,
   description,
   price,
-  quantity,
+  status,
   category,
   brandId,
   imageId
@@ -15,7 +15,7 @@ const createProduct = async (
       name,
       description,
       price,
-      quantity,
+      status,
       category,
       brandId,
       imageId

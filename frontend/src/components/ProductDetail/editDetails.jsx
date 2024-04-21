@@ -1,26 +1,17 @@
-import React, { useEffect, useState } from "react";
-import {
-  getProduct,
-  getImageDetail,
-  CreateProductDetails,
-} from "../../services/productDetails";
-import { GetListImage } from "../../services/productImage";
+import React, { useState } from "react";
+import {UpdateProductDetails} from "../../services/productDetails"
 import toast from "react-hot-toast";
-import Select from "react-select";
 
-const CreateDetails = (props) => {
-  const [dataPro, setDataPro] = useState([]);
-  const [dataIm, setDataIm] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [imageUrls, setImageUrls] = useState([]);
+const EditDetails = (props) => {
   const [formData, setFormData] = useState({
     color: "",
     code: "",
     size: "",
     description: "",
     quantity: "",
+    ...props.data.productVariant,
   });
-  
+
 
   const handleInputChange = (e) => {
     const fieldName = e.target.name;
@@ -31,106 +22,31 @@ const CreateDetails = (props) => {
     }));
   };
 
-  const fetchProduct = async () => {
-    try {
-      const response = await getProduct();
-      if (response && response.data && response.data.EC === 0) {
-        setDataPro(response.data.product);
-      } else {
-        toast.error("Failed to fetch product data!");
-      }
-    } catch (error) {
-      console.error("Error fetching product data:", error);
-      toast.error("Failed to fetch product data!");
-    }
-  };
-
-  const fetchImage = async () => {
-    try {
-      const response = await GetListImage();
-      if (response && response.data && response.data.EC === 0) {
-        setDataIm(response.data.images.images);
-      } else {
-        toast.error("Failed to fetch image data!");
-      }
-    } catch (error) {
-      console.error("Error fetching image data:", error);
-      toast.error("Failed to fetch image data!");
-    }
-  };
-
-  const options = dataPro.map((product) => ({
-    value: product.id,
-    label: product.name,
-  }));
-
-  const handleChange = async (selectedOption) => {
-    if (selectedOption) {
-      setSelectedProduct(selectedOption);
-      const selectedProductData = dataPro.find(
-        (product) => product.id === selectedOption.value
-      );
-      const imageId = selectedProductData?.imageId;
-
-      try {
-        const imageDetailResponse = await getImageDetail(imageId);
-        const imageURLs = imageDetailResponse.data.image.URL;
-        setImageUrls(imageURLs);
-      } catch (error) {
-        console.error("Error fetching image details:", error);
-        toast.error("Failed to fetch image details!");
-      }
-    } else {
-      setSelectedProduct(null);
-      setImageUrls([]);
-    }
-  };
-
   const handleSubmit = async () => {
+    const data = {
+      color: formData.color,
+      codeColor: formData.codeColor,
+      size: formData.size,
+      description: formData.description,
+      quantity: formData.quantity,
+    };
+    
     try {
-      if (!selectedProduct) {
-        toast.error("Please select a product.");
-        return;
-      }
-
-      const data = {
-        productId: selectedProduct.value,
-        productvariants: [
-          {
-            color: formData.color,
-            codeColor: formData.codeColor,
-            size: formData.size,
-            description: formData.description,
-            quantity: formData.quantity,
-          },
-        ],
-      };
-
-      const response = await CreateProductDetails(data);
-      if (response && response.data && response.data.EC === 0) {
-        toast.success(response.data.message);
-        props.close();
-        props.fetch();
-      } else {
-        toast.error(response.data.error);
+      const response = await UpdateProductDetails(props.data.id,data)
+      console.log(response);
+      if(response && response.data && response.data.EC === 0){
+        toast.success(response.data.message)
+        props.close()
+        props.fetch()
+      }else{
+        toast.error(response.data.error)
+        props.show()
       }
     } catch (error) {
-      console.error("Error creating product details:", error);
-      toast.error("Failed to create product details!");
+     toast.error("Update Error !")
     }
   };
 
-  useEffect(() => {
-    fetchProduct();
-    fetchImage();
-  }, []);
-
-  let imageUrlsArray = [];
-  try {
-    imageUrlsArray = JSON.parse(imageUrls)
-  } catch (error) {
-   
-  }
 
   return (
     <div>
@@ -139,7 +55,7 @@ const CreateDetails = (props) => {
           <div className="relative p-2 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
             <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Create ProductImage
+                Edit productDetails
               </h3>
               <button
                 onClick={props.close}
@@ -170,12 +86,14 @@ const CreateDetails = (props) => {
                   <label className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
                     Name Product
                   </label>
-                  <Select
-                    value={selectedProduct}
-                    onChange={(selectedOption) => handleChange(selectedOption)}
-                    options={options}
-                    isClearable
-                    placeholder="Choose Product"
+                  <input
+                    disabled
+                    value={props.data.Product.name}
+                    onChange={handleInputChange}
+                    type="text"
+                    className="bg-gray-200 border border-gray-400 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                    placeholder="size..."
+                    name="productId"
                   />
                 </div>
 
@@ -241,25 +159,6 @@ const CreateDetails = (props) => {
                 </div>
               </div>
 
-              <div>
-                <div className="grid gap-4 mb-4 sm:grid-cols-1">
-                  <div className="flex items-center justify-center w-full">
-                    {imageUrlsArray.map((imageUrl) => (
-                      <img
-                        key={imageUrl} // Sử dụng URL hình ảnh làm key
-                        src={imageUrl}
-                        alt={`Image ${imageUrl}`}
-                        style={{
-                          width: "150px",
-                          height: "150px",
-                          marginRight: "10px",
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
               <div className="grid gap-2 mb-2 sm:grid-cols-1">
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Description Size
@@ -268,7 +167,7 @@ const CreateDetails = (props) => {
                   value={formData.description}
                   onChange={handleInputChange}
                   rows="4"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                  className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Write your thoughts here..."
                   name="description"
                 ></textarea>
@@ -283,9 +182,9 @@ const CreateDetails = (props) => {
                 Close
               </button>
               <button
-                onClick={handleSubmit}
+                onClick={() => handleSubmit()}
                 type="submit"
-                className="text-blue-600 hover:text-white border border-blue-800 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-6 py-2 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
+                className="text-blue-600 hover:text-white border border-blue-800 hover:bg-blue-600   focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-6 py-2 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
               >
                 UPLOAD
               </button>
@@ -298,4 +197,4 @@ const CreateDetails = (props) => {
   );
 };
 
-export default CreateDetails;
+export default EditDetails;

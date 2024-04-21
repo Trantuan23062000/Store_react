@@ -6,8 +6,8 @@ import { updateProductAndImage } from "../../services/product/UpdateProductImage
 const productSchema = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().required(),
+  status: Joi.string().required(),
   price: Joi.number().positive().required(),
-  quantity: Joi.number().positive().required(),
   category: Joi.string().required(),
   brandId: Joi.string().required(),
   imageId: Joi.string().required()

@@ -37,7 +37,7 @@ const Sidebar = () => {
                     {
                         category.map(({ text, icon, url }, index) => {
                             return (
-                                <Link to={`/admin-dashboard/${url}`} onClick={() => {
+                                <Link to={`/${url}`} onClick={() => {
                                     setActiveCat(text)
                                 }} key={index} className={`self-stretch duration-300 cursor-pointer px-[18px] ${activeCat === text ? ' bg-orange-50 bg-opacity-80 border-r-2 border-orange-600 ' : 'text-zinc-500 hover:bg-neutral-200'} py-3.5 justify-start items-center gap-3 inline-flex`}>
                                     <div className={`w-6 relative ${activeCat === text ? 'text-orange-600' : 'text-zinc-500'} text-xl`} ><i className={`${icon}`}></i></div>

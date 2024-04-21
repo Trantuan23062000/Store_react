@@ -107,7 +107,7 @@ const Brand = () => {
   }
   return (
     <div>
-      <div className=" p-6 mb-1 bg-gray-200 min-h-48 m-24 items-center rounded-lg shadow-md">
+      <div className="p-2 px-0">
         {showDelete ? (
           <DeteteModal
             onclose={closeDelete}
@@ -160,8 +160,8 @@ const Brand = () => {
           </button>
         </div>
 
-        <div className="overflow-x-auto rounded-lg">
-          <table className="table-auto min-w-full divide-y divide-gray-200">
+        <div className="relative overflow-x-auto">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="bg-gray-50">
               <tr>
                 <th
@@ -257,9 +257,7 @@ const Brand = () => {
                   })}
                 </>
               ) : (
-                <tr>
-                  <div></div>
-                </tr>
+                null
               )}
             </tbody>
           </table>

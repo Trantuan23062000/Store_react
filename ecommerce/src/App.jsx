@@ -12,12 +12,15 @@ import Register from "./componets/auth/register";
 import Forgot from "./componets/auth/forgot";
 import Contact from "./componets/layout/contact";
 import Navbar from "./componets/home/navbar"
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
     <Router>
       <div className="flex flex-col h-screen">
+        
         <Navbar />
+        <Toaster /> 
         <div className="flex flex-1">
           <div className="flex-1 flex flex-col bg-gray-100 w-full">
             <Routes>

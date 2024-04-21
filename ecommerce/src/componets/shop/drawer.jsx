@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ShowFilter from "./showFilter";
 import Filter from "./filter";
 import {
@@ -11,9 +11,30 @@ import {
 } from "react-icons/cg";
 import { FaHome, FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import {GetProduct } from "../../api/shop/getproduct";
+import toast from "react-hot-toast";
 
 const Drawer = () => {
   const [showModal, setShowModal] = useState(false);
+  const [data, setdata] = useState([]);
+
+
+  const fetchData = async () => {
+    const response = await GetProduct();
+    if (response && response.data && response.data.EC === 0) {
+      setdata(response.data.product);
+      //console.log(response.data.product);
+    } else {
+      toast.error("no data !");
+    }
+  };
+
+  
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line
+  }, []);
+
   const handleModalToggle = () => {
     setShowModal(!showModal);
   };
@@ -22,7 +43,7 @@ const Drawer = () => {
   };
   return (
     <div>
-       <div className="py-4 flex items-center gap-3">
+      <div className="py-4 flex items-center gap-3">
         <div className="text-primary text-base">
           <Link to="/">
             <FaHome />
@@ -61,353 +82,84 @@ const Drawer = () => {
           </div>
 
           <div className="grid md:grid-cols-3 grid-cols-2 gap-6">
-            <div className="bg-white shadow rounded overflow-hidden group">
-              <div className="relative">
-                <img
-                  src="images/product1.jpeg"
-                  alt="product 1"
-                  className="w-full"
-                />
-                <div
-                  className="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                        justify-center gap-2 opacity-0 group-hover:opacity-100 transition"
-                >
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                    <CgShoppingCart />
-                  </div>
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                    <CgHeart />
-                  </div>
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                  <Link to="/product"><CgSearch /></Link> 
-                  </div>
-                </div>
-              </div>
-              <div className="pt-4 pb-3 px-4">
-                <div href="#">
-                  <h4 className="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition">
-                  Nike air
-                  </h4>
-                </div>
-                <div className="flex items-baseline mb-1 space-x-2">
-                  <p className="text-xl text-primary font-semibold">$45.00</p>
-                  <p className="text-sm text-gray-400 line-through">$55.90</p>
-                </div>
-                <div className="flex items-center">
-                  <div className="flex gap-1 text-sm text-yellow-400">
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                  </div>
-                  <div className="text-xs text-gray-500 ml-3">(150)</div>
-                </div>
-              </div>
-              <div className="block w-full py-1 text-center text-black font-bold bg-white border rounded-b hover:bg-transparent hover:text-red-500 transition">
-                Add to cart 
-              </div>
-            </div>
-
-            <div className="bg-white shadow rounded overflow-hidden group">
-              <div className="relative">
-                <img
-                  src="images/product2.jpeg"
-                  alt="product 1"
-                  className="w-full"
-                />
-                <div
-                  className="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                        justify-center gap-2 opacity-0 group-hover:opacity-100 transition"
-                >
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                    <CgShoppingCart />
-                  </div>
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                    <CgHeart />
-                  </div>
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                  <Link to="/product"><CgSearch /></Link> 
-                  </div>
-                </div>
-              </div>
-              <div className="pt-4 pb-3 px-4">
-                <div href="#">
-                  <h4 className="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition">
-                    Nike limit
-                  </h4>
-                </div>
-                <div className="flex items-baseline mb-1 space-x-2">
-                  <p className="text-xl text-primary font-semibold">$45.00</p>
-                  <p className="text-sm text-gray-400 line-through">$55.90</p>
-                </div>
-                <div className="flex items-center">
-                  <div className="flex gap-1 text-sm text-yellow-400">
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                  </div>
-                  <div className="text-xs text-gray-500 ml-3">(150)</div>
-                </div>
-              </div>
-              <div className="block w-full py-1 text-center text-black font-bold bg-white border border-primary rounded-b hover:bg-transparent hover:text-primary hover:text-red-500 transition">
-                Add to cart 
-              </div>
-            </div>
-
-            <div className="bg-white shadow rounded overflow-hidden group">
-              <div className="relative">
-                <img
-                  src="images/product3.jpeg"
-                  alt="product 1"
-                  className="w-full"
-                />
-                <div
-                  className="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                        justify-center gap-2 opacity-0 group-hover:opacity-100 transition"
-                >
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                    <CgShoppingCart />
-                  </div>
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                    <CgHeart />
-                  </div>
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                  <Link to="/product"><CgSearch /></Link> 
-                  </div>
-                </div>
-              </div>
-              <div className="pt-4 pb-3 px-4">
-                <div href="#">
-                  <h4 className="uppercase font-medium text-xl mb-2 text-gray-800 transition">
-                   Nike Blue
-                  </h4>
-                </div>
-                <div className="flex items-baseline mb-1 space-x-2">
-                  <p className="text-xl text-black font-semibold">$45.00</p>
-                  <p className="text-sm text-gray-400 line-through">$55.90</p>
-                </div>
-                <div className="flex items-center">
-                  <div className="flex gap-1 text-sm text-yellow-400">
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                  </div>
-                  <div className="text-xs text-gray-500 ml-3">(150)</div>
-                </div>
-              </div>
-              <div className="block w-full py-1 text-center text-black font-bold bg-white border border-primary rounded-b hover:bg-transparent hover:text-primary hover:text-red-500 transition">
-                Add to cart 
-              </div>
-            </div>
-
-            <div className="bg-white shadow rounded overflow-hidden group">
-              <div className="relative">
-                <img
-                  src="images/product4.jpeg"
-                  alt="product 1"
-                  className="w-full"
-                />
-                <div
-                  className="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                        justify-center gap-2 opacity-0 group-hover:opacity-100 transition"
-                >
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                    <CgShoppingCart />
-                  </div>
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                    <CgHeart />
-                  </div>
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                  <Link to="/product"><CgSearch /></Link> 
-                  </div>
-                </div>
-              </div>
-              <div className="pt-4 pb-3 px-4">
-                <div href="#">
-                  <h4 className="uppercase font-medium text-xl mb-2 text-gray-800 transition">
-                    Nike jodan 2024
-                  </h4>
-                </div>
-                <div className="flex items-baseline mb-1 space-x-2">
-                  <p className="text-xl text-primary font-semibold">$45.00</p>
-                  <p className="text-sm text-gray-400 line-through">$55.90</p>
-                </div>
-                <div className="flex items-center">
-                  <div className="flex gap-1 text-sm text-yellow-400">
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                  </div>
-                  <div className="text-xs text-gray-500 ml-3">(150)</div>
-                </div>
-              </div>
-              <div className="block w-full py-1 text-center text-black font-bold bg-white border rounded-b hover:bg-transparent hover:text-red-500 transition">
-                Add to cart 
-              </div>
-            </div>
-
-            <div className="bg-white shadow rounded overflow-hidden group">
-              <div className="relative">
-                <img
-                  src="images/product5.jpeg"
-                  alt="product 1"
-                  className="w-full"
-                />
-                <div
-                  className="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                        justify-center gap-2 opacity-0 group-hover:opacity-100 transition"
-                >
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                    <CgShoppingCart />
-                  </div>
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                    <CgHeart />
-                  </div>
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                  <Link to="/product"><CgSearch /></Link> 
-                  </div>
-                </div>
-              </div>
-              <div className="pt-4 pb-3 px-4">
-                <div href="#">
-                  <h4 className="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition">
-                   Nike air
-                  </h4>
-                </div>
-                <div className="flex items-baseline mb-1 space-x-2">
-                  <p className="text-xl text-primary font-semibold">$45.00</p>
-                  <p className="text-sm text-gray-400 line-through">$55.90</p>
-                </div>
-                <div className="flex items-center">
-                  <div className="flex gap-1 text-sm text-yellow-400">
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                  </div>
-                  <div className="text-xs text-gray-500 ml-3">(150)</div>
-                </div>
-              </div>
-              <div className="block w-full py-1 text-center text-black font-bold bg-white border border-primary rounded-b hover:bg-transparent hover:text-primary hover:text-red-500 transition">
-                Add to cart 
-              </div>
-            </div>
-
-            <div className="bg-white shadow rounded overflow-hidden group">
-              <div className="relative">
-                <img
-                  src="images/product8.jpeg"
-                  alt="product 1"
-                  className="w-full"
-                />
-                <div
-                  className="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                        justify-center gap-2 opacity-0 group-hover:opacity-100 transition"
-                >
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                    <CgShoppingCart />
-                  </div>
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                    <CgHeart />
-                  </div>
-                  <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                  <Link to="/product"><CgSearch /></Link> 
-                  </div>
-                </div>
-              </div>
-              <div className="pt-4 pb-3 px-4">
-                <div href="#">
-                  <h4 className="uppercase font-medium text-xl mb-2 text-gray-800 transition">
-                    Nike black
-                  </h4>
-                </div>
-                <div className="flex items-baseline mb-1 space-x-2">
-                  <p className="text-xl font-semibold">$45.00</p>
-                  <p className="text-sm text-gray-400 line-through">$55.90</p>
-                </div>
-                <div className="flex items-center">
-                  <div className="flex gap-1 text-sm text-yellow-400">
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                    <span>
-                      <FaStar />
-                    </span>
-                  </div>
-                  <div className="text-xs text-gray-500 ml-3">(150)</div>
-                </div>
-              </div>
-              <div className="block w-full py-1 text-center text-black font-bold bg-white border rounded-b hover:bg-transparent hover:text-red-500 transition">
-                Add to cart 
-              </div>
-            </div>
+            {React.Children.toArray(
+              data.length > 0 &&
+                data.map((item) => (
+                  <>
+                    <div key={item.id} className="bg-white shadow rounded overflow-hidden group">
+                      <div className="relative">
+                        {item.Product.Image && item.Product.Image.URL?(
+                          <img
+                          src={JSON.parse(item.Product.Image.URL)[0]} // Truy cập vào phần tử đầu tiên của mảng URL
+                          alt="product 1"
+                          
+                        />
+                        ):null}
+                       
+                        <div
+                          className="absolute inset-0 bg-black bg-opacity-40 flex items-center 
+                            justify-center gap-2 opacity-0 group-hover:opacity-100 transition"
+                        >
+                          <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
+                            <CgShoppingCart />
+                          </div>
+                          <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
+                            <CgHeart />
+                          </div>
+                          <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
+                            <Link to="/product">
+                              <CgSearch />
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="pt-4 pb-3 px-4">
+                        <div>
+                          <h4 className="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition">
+                            {item.Product.name}
+                          </h4>
+                        </div>
+                        <div className="flex items-baseline mb-1 space-x-2">
+                          <p className="text-xl text-primary font-semibold">
+                          {item.Product.price.toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                        })}
+                          </p>
+                          <p className="text-sm text-gray-400 line-through">
+                            $55.90
+                          </p>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="flex gap-1 text-sm text-yellow-400">
+                            <span>
+                              <FaStar />
+                            </span>
+                            <span>
+                              <FaStar />
+                            </span>
+                            <span>
+                              <FaStar />
+                            </span>
+                            <span>
+                              <FaStar />
+                            </span>
+                            <span>
+                              <FaStar />
+                            </span>
+                          </div>
+                          <div className="text-xs text-gray-500 ml-3">
+                            (150)
+                          </div>
+                        </div>
+                      </div>
+                      <div className="block w-full py-1 text-center text-black font-bold bg-white border rounded-b hover:bg-transparent hover:text-red-500 transition">
+                        Add to cart
+                      </div>
+                    </div>
+                  </>
+                ))
+            )}
           </div>
         </div>
       </div>

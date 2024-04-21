@@ -1,7 +1,6 @@
 import "./App.css";
 import {Routes,Route,useNavigate} from "react-router-dom"
 import Doashboard from "./pages/admin-doashboard/doashboard";
-import { useEffect } from "react";
 import { Toaster } from 'react-hot-toast';
 
 function App() {
@@ -14,7 +13,7 @@ function App() {
     <div className="h-screen w-full">
       <Toaster /> 
      <Routes>
-      <Route path="/admin-dashboard/:category" element={<Doashboard/>}/>
+      <Route path="/:category" element={<Doashboard/>}/>
      </Routes>
     </div>
   );

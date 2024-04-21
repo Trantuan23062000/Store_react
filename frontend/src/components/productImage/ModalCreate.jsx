@@ -8,7 +8,7 @@ const ModalCreate = (props) => {
     name: "",
     description: "",
     price: "",
-    quantity: "",
+    status: "",
     category: "",
     brandId: "",
     images: [],
@@ -48,8 +48,8 @@ const ModalCreate = (props) => {
       }
     });
 
-    if (selectedImages.length + formData.images.length > 3) {
-      toast.error("You can only select up to 3 images.");
+    if (selectedImages.length + formData.images.length > 4) {
+      toast.error("You can only select up to 4 images.");
       return;
     }
 
@@ -81,11 +81,12 @@ const ModalCreate = (props) => {
     dataSened.append("name", formData.name);
     dataSened.append("description", formData.description);
     dataSened.append("price", formData.price);
-    dataSened.append("quantity", formData.quantity);
+    dataSened.append("status", formData.status);
     dataSened.append("category", formData.category);
     dataSened.append("brandId", formData.brandId);
     console.log(dataSened);
     const response = await CreateProductImage(dataSened);
+    
     //console.log(response);
     if (response && response.data && response.data.EC === 0) {
       toast.success(response.data.message);
@@ -99,6 +100,7 @@ const ModalCreate = (props) => {
 
   useEffect(() => {
     fetchBrand();
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -162,19 +164,24 @@ const ModalCreate = (props) => {
                   </div>
                   <div>
                     <label className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-                      Quantity
+                    Status
                     </label>
-                    <input
+                    <select
+                      name="status"
                       onChange={(e) => HandleChangeInput(e)}
-                      type="text"
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="Quantity"
-                      name="quantity"
-                    />
+                    >
+                      <option selected>Choose status</option>
+                      <option value="Stocking">Stocking</option>
+                      <option value="Out of stock">Out of stock</option>
+                      <option value="Limited goods">
+                      Limited goods
+                      </option>
+                    </select>
                   </div>
                   <div>
                     <label
-                      for="phone"
+                      htmlFor="phone"
                       className="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
                     >
                       Category
@@ -194,7 +201,7 @@ const ModalCreate = (props) => {
                   </div>
                   <div>
                     <label
-                      for="phone"
+                      htmlFor="phone"
                       className="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
                     >
                       Brand

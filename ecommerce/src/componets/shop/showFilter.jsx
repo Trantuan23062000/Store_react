@@ -1,7 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { CgClose } from "react-icons/cg";
+import { GetBrands } from "../../api/shop/getproduct";
 
 const ShowFilter = (props) => {
+  const [dataBrand, setDataBrand] = useState([]);
+  const fetchBrand = async () => {
+    const response = await GetBrands();
+    if(response && response.data && response.data.EC === 0){
+      setDataBrand(response.data.DT)
+    }
+  };
+
+  useEffect(()=>{
+    fetchBrand()
+  },[])
   return (
     <div className="top-0 left-0 right-0 z-50 flex justify-center items-center">
       <div className="bg-gray-900 bg-opacity-50 absolute"></div>
@@ -39,7 +51,7 @@ const ShowFilter = (props) => {
                     className="text-primary focus:ring-0 rounded-sm cursor-pointer"
                   />
                 </div>
-                <label className="text-gray-600 ml-3 cusror-pointer">All</label>
+                <label className="text-gray-600 ml-3 cusror-pointer">Men & Wonmen</label>
               </div>
             </div>
           </div>
@@ -59,10 +71,10 @@ const ShowFilter = (props) => {
               >
                 Choose a Brand
               </option>
-              <option value="Nike">Nike</option>
-              <option value="Adidas">Adidas</option>
-              <option value="Puma">Puma</option>
-              <option value="Luis Vuiton">Luis Vuiton</option>
+              {React.Children.toArray(dataBrand.map((item)=>(
+                  <option value={item.id}>{item.name}</option>
+              )))}
+             
             </select>
           </div>
 
@@ -101,7 +113,7 @@ const ShowFilter = (props) => {
                     className="text-primary focus:ring-0 rounded-sm cursor-pointer"
                   />
                 </div>
-                <label className="text-gray-600 ml-3 cusror-pointer">27</label>
+                <label className="text-gray-600 ml-3 cusror-pointer">39</label>
               </div>
               <div className="flex">
                 <div className="flex items-center">
@@ -110,7 +122,7 @@ const ShowFilter = (props) => {
                     className="text-primary focus:ring-0 rounded-sm cursor-pointer"
                   />
                 </div>
-                <label className="text-gray-600 ml-3 cusror-pointer">28</label>
+                <label className="text-gray-600 ml-3 cusror-pointer">39.5</label>
               </div>
               <div className="flex">
                 <div className="flex items-center">
@@ -119,7 +131,7 @@ const ShowFilter = (props) => {
                     className="text-primary focus:ring-0 rounded-sm cursor-pointer"
                   />
                 </div>
-                <label className="text-gray-600 ml-3 cusror-pointer">28.5</label>
+                <label className="text-gray-600 ml-3 cusror-pointer">40</label>
               </div>
               <div className="flex">
                 <div className="flex items-center">
@@ -128,7 +140,7 @@ const ShowFilter = (props) => {
                     className="text-primary focus:ring-0 rounded-sm cursor-pointer"
                   />
                 </div>
-                <label className="text-gray-600 ml-3 cusror-pointer">29</label>
+                <label className="text-gray-600 ml-3 cusror-pointer">41</label>
               </div>
               <div className="flex">
                 <div className="flex items-center">
@@ -140,49 +152,7 @@ const ShowFilter = (props) => {
                 <label className="text-gray-600 ml-3 cusror-pointer">30</label>
               </div>
             </div>
-          </div>
-
-          <div className="pt-4 hover:bg-gray-300">
-            <h3 className="text-xl text-gray-800 mb-3 uppercase font-bold">
-              Color
-            </h3>
-            <div className="flex items-center gap-2">
-              <div className="color-selector">
-                <input type="radio" name="color" id="red" className="hidden" />
-                <label
-                  htmlFor="red"
-                  className="border border-gray-200 rounded-sm h-6 w-6  cursor-pointer shadow-sm block"
-                  style={{ backgroundColor: "#fc3d57" }}
-                ></label>
-              </div>
-              <div className="color-selector">
-                <input
-                  type="radio"
-                  name="color"
-                  id="black"
-                  className="hidden"
-                />
-                <label
-                  htmlFor="black"
-                  className="border border-gray-200 rounded-sm h-6 w-6  cursor-pointer shadow-sm block"
-                  style={{ backgroundColor: "#fc3d57" }}
-                ></label>
-              </div>
-              <div className="color-selector">
-                <input
-                  type="radio"
-                  name="color"
-                  id="white"
-                  className="hidden"
-                />
-                <label
-                  htmlFor="white"
-                  className="border border-gray-200 rounded-sm h-6 w-6  cursor-pointer shadow-sm block"
-                  style={{ backgroundColor: "#fc3d57" }}
-                ></label>
-              </div>
-            </div>
-          </div>
+          </div>  
         </div>
         <div className="border-b pt-4 border-gray-300"></div>
         <button

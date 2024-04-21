@@ -1,19 +1,11 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
-const Product = require("../models/product")
-const productVariant = require("../models/productvariant")
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Detail extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      Detail.belongsTo(models.Products);
-      Detail.belongsTo(models.productVariant);
+      Detail.belongsTo(models.Products, { foreignKey: 'productId' });
+      Detail.belongsTo(models.productVariant, { foreignKey: 'productVariantId' });
     }
   }
   Detail.init({
@@ -25,9 +17,8 @@ module.exports = (sequelize, DataTypes) => {
     productId: {
       type: DataTypes.UUID,
       allowNull: false,
-      primaryKey: true,
       references: {
-        model: Product, 
+        model: 'Products', // Thay đổi thành tên của bảng
         key: 'id',
       },
       onDelete: 'CASCADE',
@@ -35,9 +26,8 @@ module.exports = (sequelize, DataTypes) => {
     productVariantId: {
       type: DataTypes.UUID,
       allowNull: false,
-      primaryKey: true,
       references: {
-        model: productVariant,
+        model: 'productVariants', // Thay đổi thành tên của bảng
         key: 'id',
       },
       onDelete: 'CASCADE',
@@ -47,4 +37,4 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Detail',
   });
   return Detail;
-};
+};  

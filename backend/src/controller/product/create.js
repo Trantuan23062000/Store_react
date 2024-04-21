@@ -1,5 +1,4 @@
 import Joi from "joi";
-import db from "../../models";
 import { uploadImage } from "../../services/product/upload";
 import { createProduct } from "../../services/product/create";
 
@@ -8,7 +7,7 @@ const productSchema = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().required(),
   price: Joi.number().positive().required(),
-  quantity: Joi.number().positive().required(),
+  status: Joi.string().required(),
   category: Joi.string().required(),
   brandId: Joi.string().required(),
 });
@@ -19,7 +18,7 @@ const addProduct = async (req, res, next) => {
     if (validationError) {
       return res.status(201).json({ EC: 1, error: validationError.details[0].message });
     }
-    const { name, description, price, quantity, category, brandId } = value;
+    const { name, description, price, status, category, brandId } = value;
     const files = req.files;
 
     // const existingProduct = await db.Products.findOne({ where: { name } });
@@ -32,8 +31,8 @@ const addProduct = async (req, res, next) => {
     }
 
 
-    if (files.length > 3) {
-      return res.status(201).json({ EC: 1, error: "You can only upload up to 3 images at a time." });
+    if (files.length > 4) {
+      return res.status(201).json({ EC: 1, error: "You can only upload up to 4 images at a time." });
     }
 
     // Upload ảnh và lấy ID của bản ghi Image
@@ -44,7 +43,7 @@ const addProduct = async (req, res, next) => {
       name,
       description,
       price,
-      quantity,
+      status,
       category,
       brandId,
       imageId
