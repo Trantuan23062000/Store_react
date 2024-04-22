@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { GetBrands } from "../../api/shop/getproduct";
+import { GetSize } from "../../api/shop/getsize";
+import { GetColor } from "../../api/shop/getcolor";
 
 const Filter = () => {
   const [dataBrand, setDataBrand] = useState([]);
+  const [size, setSize] = useState([]);
+  const [color,setColor] = useState([])
+  
   const fetchBrand = async () => {
     const response = await GetBrands();
     if(response && response.data && response.data.EC === 0){
@@ -10,8 +15,24 @@ const Filter = () => {
     }
   };
 
+  const fetchSize = async () => {
+    const response = await GetSize();
+    if(response && response.data && response.data.EC === 0){
+      setSize(response.data.size)
+    }
+  };
+
+  const fetchColor = async()=>{
+    const response = await GetColor()
+    if(response && response.data && response.data.EC === 0){
+      setColor(response.data.color)
+    }
+  }
+ 
   useEffect(()=>{
     fetchBrand()
+    fetchSize();
+    fetchColor()
     // eslint-disable-next-line
   },[])
   return (
@@ -126,71 +147,51 @@ const Filter = () => {
                 size
               </h3>
               <div className="flex justify-center text-center gap-2">
-                <div className="size-selector">
+                {React.Children.toArray(
+                  size.map((item)=>(
+                    <div className="size-selector">
+                    <input
+                      type="radio"
+                      name="size"
+                      id="size-xs"
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="size-xs"
+                      className="text-xs border border-gray-200 rounded-sm h-6 w-6 flex items-center justify-center cursor-pointer shadow-sm text-gray-600"
+                    >
+                     {item.size.substring(2)}
+                    </label>
+                  </div>
+                  )))
+                }
+               
+               </div>
+            </div>
+
+            <div className="pt-4">
+              <h3 className="text-xl text-gray-800 mb-3 uppercase font-medium">
+                Color
+              </h3>
+              <div className="flex justify-center items-center gap-2">
+                {React.Children.toArray(color.map((item)=>(
+
+                 <div className="color-selector">
                   <input
                     type="radio"
-                    name="size"
+                    name="color"
+                    id="red"
                     className="hidden"
                   />
                   <label
-                    className="text-xs border border-gray-200 rounded-sm h-6 w-6 flex items-center justify-center cursor-pointer shadow-sm text-gray-600"
-                  >
-                    39
-                  </label>
+                    htmlFor="red"
+                    className="border border-gray-200 rounded-full h-6 w-6  cursor-pointer shadow-sm block"
+                    style={{ backgroundColor: `${item.codeColor}` }}
+                  ></label>
                 </div>
-                <div className="size-selector">
-                  <input
-                    type="radio"
-                    name="size"
-                    className="hidden"
-                  />
-                  <label
-                    htmlFor="size-sm"
-                    className="text-xs border border-gray-200 rounded-sm h-6 w-6 flex items-center justify-center cursor-pointer shadow-sm text-gray-600"
-                  >
-                    39.5
-                  </label>
-                </div>
-                <div className="size-selector">
-                  <input
-                    type="radio"
-                    name="size"
-                    className="hidden"
-                  />
-                  <label
-                    htmlFor="size-m"
-                    className="text-xs border border-gray-200 rounded-sm h-6 w-6 flex items-center justify-center cursor-pointer shadow-sm text-gray-600"
-                  >
-                    40
-                  </label>
-                </div>
-                <div className="size-selector">
-                  <input
-                    type="radio"
-                    name="size"
-                    id="size-l"
-                    className="hidden"
-                  />
-                  <label
-                    htmlFor="size-l"
-                    className="text-xs border border-gray-200 rounded-sm h-6 w-6 flex items-center justify-center cursor-pointer shadow-sm text-gray-600"
-                  >
-                    41
-                  </label>
-                </div>
-                <div className="size-selector">
-                  <input
-                    type="radio"
-                    name="size"
-                    className="hidden"
-                  />
-                  <label
-                    htmlFor="size-xl"
-                    className="text-xs border border-gray-200 rounded-sm h-6 w-6 flex items-center justify-center cursor-pointer shadow-sm text-gray-600"
-                  >
-                    31
-                  </label>
-                </div>
+
+                )))}
+               
               </div>
             </div>
           </div>

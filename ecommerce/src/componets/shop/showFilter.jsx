@@ -1,9 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { CgClose } from "react-icons/cg";
 import { GetBrands } from "../../api/shop/getproduct";
+import { GetSize } from "../../api/shop/getsize";
+import { GetColor } from "../../api/shop/getcolor";
+
+
 
 const ShowFilter = (props) => {
   const [dataBrand, setDataBrand] = useState([]);
+  const [size, setSize] = useState([]);
+  const [color,setColor] = useState([])
+
+
+  const fetchSize = async () => {
+    const response = await GetSize();
+    if(response && response.data && response.data.EC === 0){
+      setSize(response.data.size)
+    }
+  };
+
+  const fetchColor = async()=>{
+    const response = await GetColor()
+    if(response && response.data && response.data.EC === 0){
+      setColor(response.data.color)
+    }
+  }
+
+
+
   const fetchBrand = async () => {
     const response = await GetBrands();
     if(response && response.data && response.data.EC === 0){
@@ -13,6 +37,8 @@ const ShowFilter = (props) => {
 
   useEffect(()=>{
     fetchBrand()
+    fetchColor()
+    fetchSize()
   },[])
   return (
     <div className="top-0 left-0 right-0 z-50 flex justify-center items-center">
@@ -106,53 +132,39 @@ const ShowFilter = (props) => {
               size
             </h3>
             <div className="flex space-x-4 items-center">
-              <div className="flex">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="text-primary focus:ring-0 rounded-sm cursor-pointer"
-                  />
+              {React.Children.toArray(size.map((item)=>(
+                  <div className="flex">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="text-primary focus:ring-0 rounded-sm cursor-pointer"
+                    />
+                  </div>
+                  <label className="text-gray-600 ml-3 cusror-pointer">{item.size.substring(2)}</label>
                 </div>
-                <label className="text-gray-600 ml-3 cusror-pointer">39</label>
-              </div>
-              <div className="flex">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="text-primary focus:ring-0 rounded-sm cursor-pointer"
-                  />
-                </div>
-                <label className="text-gray-600 ml-3 cusror-pointer">39.5</label>
-              </div>
-              <div className="flex">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="text-primary focus:ring-0 rounded-sm cursor-pointer"
-                  />
-                </div>
-                <label className="text-gray-600 ml-3 cusror-pointer">40</label>
-              </div>
-              <div className="flex">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="text-primary focus:ring-0 rounded-sm cursor-pointer"
-                  />
-                </div>
-                <label className="text-gray-600 ml-3 cusror-pointer">41</label>
-              </div>
-              <div className="flex">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="text-primary focus:ring-0 rounded-sm cursor-pointer"
-                  />
-                </div>
-                <label className="text-gray-600 ml-3 cusror-pointer">30</label>
-              </div>
+              )))}
+             
             </div>
-          </div>  
+          </div>
+
+          <div className="pt-4 hover:bg-gray-300">
+            <h3 className="text-xl text-gray-800 mb-3 uppercase font-bold">
+              Color
+            </h3>
+            <div className="flex items-center gap-2">
+              {React.Children.toArray(color.map((item)=>(
+                   <div className="color-selector">
+                   <input type="radio" name="color" id="red" className="hidden" />
+                   <label
+                     htmlFor="red"
+                     className="border border-gray-200 rounded-full h-6 w-6  cursor-pointer shadow-sm block"
+                     style={{ backgroundColor: `${item.codeColor}` }}
+                   ></label>
+                 </div>
+              )))}
+             
+            </div>
+          </div>
         </div>
         <div className="border-b pt-4 border-gray-300"></div>
         <button

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CgClose } from "react-icons/cg";
 
-const ProductImage = () => {
+const ProductImage = (props) => {
     const [selectedImage, setSelectedImage] = useState(null);
 
   const openModal = (imageUrl) => {
@@ -11,6 +11,11 @@ const ProductImage = () => {
   const closeModal = () => {
     setSelectedImage(null);
   };
+
+  useEffect(()=>{
+    console.log(props);
+    // eslint-disable-next-line
+  },[])
   return (
     <div>
       <div>

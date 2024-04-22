@@ -11,29 +11,52 @@ import {
 } from "react-icons/cg";
 import { FaHome, FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import {GetProduct } from "../../api/shop/getproduct";
+import { GetProduct } from "../../api/shop/getproduct";
 import toast from "react-hot-toast";
 
 const Drawer = () => {
   const [showModal, setShowModal] = useState(false);
   const [data, setdata] = useState([]);
-
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentLimit] = useState(6);
 
   const fetchData = async () => {
-    const response = await GetProduct();
+    const response = await GetProduct(currentPage, currentLimit);
     if (response && response.data && response.data.EC === 0) {
-      setdata(response.data.product);
+      setdata(response.data.productDetails);
+      setTotalPages(response.data.totalPages);
       //console.log(response.data.product);
     } else {
       toast.error("no data !");
     }
   };
 
-  
+  const HandleShow = (product) =>{
+     setdata(product)
+  }
+
+
+  const handleChangPage = (pagenumber) => {
+    setCurrentPage(pagenumber);
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
   useEffect(() => {
     fetchData();
     // eslint-disable-next-line
-  }, []);
+  }, [currentPage]);
 
   const handleModalToggle = () => {
     setShowModal(!showModal);
@@ -86,16 +109,18 @@ const Drawer = () => {
               data.length > 0 &&
                 data.map((item) => (
                   <>
-                    <div key={item.id} className="bg-white shadow rounded overflow-hidden group">
+                    <div
+                      key={item.id}
+                      className="bg-white shadow rounded overflow-hidden group"
+                    >
                       <div className="relative">
-                        {item.Product.Image && item.Product.Image.URL?(
+                        {item.Product.Image && item.Product.Image.URL ? (
                           <img
-                          src={JSON.parse(item.Product.Image.URL)[0]} // Truy cập vào phần tử đầu tiên của mảng URL
-                          alt="product 1"
-                          
-                        />
-                        ):null}
-                       
+                            src={JSON.parse(item.Product.Image.URL)[0]} // Truy cập vào phần tử đầu tiên của mảng URL
+                            alt="product 1"
+                          />
+                        ) : null}
+
                         <div
                           className="absolute inset-0 bg-black bg-opacity-40 flex items-center 
                             justify-center gap-2 opacity-0 group-hover:opacity-100 transition"
@@ -106,9 +131,9 @@ const Drawer = () => {
                           <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
                             <CgHeart />
                           </div>
-                          <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
+                          <div onClick={()=>HandleShow(item)} className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
                             <Link to="/product">
-                              <CgSearch />
+                              <CgSearch/>
                             </Link>
                           </div>
                         </div>
@@ -121,10 +146,10 @@ const Drawer = () => {
                         </div>
                         <div className="flex items-baseline mb-1 space-x-2">
                           <p className="text-xl text-primary font-semibold">
-                          {item.Product.price.toLocaleString("en-US", {
-                          style: "currency",
-                          currency: "USD",
-                        })}
+                            {item.Product.price.toLocaleString("en-US", {
+                              style: "currency",
+                              currency: "USD",
+                            })}
                           </p>
                           <p className="text-sm text-gray-400 line-through">
                             $55.90
@@ -161,42 +186,51 @@ const Drawer = () => {
                 ))
             )}
           </div>
+          {totalPages > 0 && (
+            <div className="flex container mx-auto  justify-center items-center sm:justify-between mt-6">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => {
+                    handlePreviousPage();
+                  }}
+                  className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  type="button"
+                >
+                  <CgPushChevronLeft />
+                  Previous
+                </button>
+                <div className="flex items-center gap-2">
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleChangPage(i + 1)}
+                      disabled={currentPage === i + 1}
+                      className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg bg-gray-900 text-center align-middle font-sans text-xs font-medium uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-slate-400 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                      type="button"
+                    >
+                      <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+                        {i + 1}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => {
+                    handleNextPage();
+                  }}
+                  className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-full select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  type="button"
+                >
+                  Next
+                  <CgPushChevronRight />
+                </button>
+              </div>
+              <span>
+                page {currentPage} of {totalPages}
+              </span>
+            </div>
+          )}
         </div>
-      </div>
-      <div className="flex items-center justify-center sm:justify-between mt-6">
-        <button
-          disabled
-          className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-lg select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none mr-2"
-          type="button"
-        >
-          <CgPushChevronLeft size={24} />
-        </button>
-        <div className="flex items-center gap-2">
-          <button
-            className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg bg-gray-900 text-center align-middle font-sans text-xs font-medium uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-            type="button"
-          >
-            <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-              1
-            </span>
-          </button>
-          {/* Các nút phân trang tiếp theo ở đây */}
-          <button
-            className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-            type="button"
-          >
-            <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-              2
-            </span>
-          </button>
-          {/* Thêm các nút phân trang khác ở đây */}
-        </div>
-        <button
-          className="flex items-center gap-2 px-6 py-3 font-sans text-xs font-bold text-center text-gray-900 uppercase align-middle transition-all rounded-lg select-none hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
-          type="button"
-        >
-          <CgPushChevronRight size={24} />
-        </button>
       </div>
     </div>
   );
