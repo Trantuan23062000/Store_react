@@ -1,31 +1,56 @@
 import db from "../../models/index";
+
 const updateData = async (detailId, newData) => {
+  let transaction;
   try {
+    // Bắt đầu một transaction
+    transaction = await db.sequelize.transaction();
+
     // Bước 1: Tìm detailId trong bảng Detail
-    const detail = await db.Detail.findByPk(detailId);
+    const detail = await db.Detail.findByPk(detailId, { transaction });
 
     if (!detail) {
-      throw new Error('Detail not found');
+      throw new Error("Detail not found");
     }
 
     // Bước 2: Lấy productVariantId từ detail
     const productVariantId = detail.productVariantId;
 
     // Bước 3: Tìm bản ghi trong bảng productVariant dựa trên productVariantId
-    const productVariant = await db.productVariant.findByPk(productVariantId);
-
-    if (!productVariant) {
-      throw new Error('Product variant not found');
+    const productVariant = await db.productVariant.findByPk(productVariantId, {
+      include: [db.Sizes, db.Colors], // Kết hợp với bảng Size và Color
+      transaction,
+    });
+    const size = await db.Sizes.findByPk(productVariant.sizeId, {
+      transaction,
+    });
+    const color = await db.Colors.findByPk(productVariant.colorId, {
+      transaction,
+    });
+    if (size || color || productVariant) {
+      // Cập nhật thông tin của size
+      await color.update(newData, { transaction });
+      await size.update(newData, { transaction });
+      await productVariant.update(newData, { transaction });
+    } else {
+      // Nếu không tìm thấy size, ném ra một lỗi
+      throw new Error("Data not found");
     }
 
-    // Bước 4: Cập nhật thông tin mới cho bản ghi productVariant
-    await productVariant.update(newData);
+    // Commit transaction nếu mọi thứ diễn ra thành công
+    await transaction.commit();
 
-    return productVariant;
+    // Trả về kết quả sau khi cập nhật
+    return productVariant
   } catch (error) {
-    throw error;
+    // Rollback transaction nếu có lỗi xảy ra
+    if (transaction) await transaction.rollback();
+
+    // Bắt lỗi và xử lý tại đây
+    console.log(error);
   }
 };
+
 module.exports = {
   updateData,
 };

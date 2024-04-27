@@ -20,7 +20,7 @@ const ProductDetails = () => {
     if (key !== "") {
       try {
         const response = await SearchProductDetails(key);
-        console.log(response.data.Details);
+        //console.log(response.data.Details);
         if (response.data.EC === 0) {
           setData(response.data.Details
           )
@@ -99,6 +99,7 @@ const ProductDetails = () => {
     } else {
       fetchData();
     }
+    // eslint-disable-next-line
   }, [currentPage,key]);
 
   return (
@@ -173,7 +174,7 @@ const ProductDetails = () => {
             </tr>
           </thead>
           <tbody>
-            {data && data.length > 0 ? (
+            {React.Children.toArray(data && data.length > 0 ? (
               data.map((item, index) => (
                 <>
                   <tr
@@ -190,10 +191,10 @@ const ProductDetails = () => {
                       {item.Product ? item.Product.name : ""}
                     </td>
                     <td className="px-6 py-4">
-                      {item.productVariant ? item.productVariant.color : ""}
+                      {item.productVariant ? item.productVariant.Color.color : ""}
                     </td>
                     <td className="px-6 py-4">
-                      {item.productVariant ? item.productVariant.size : ""}
+                      {item.productVariant ? item.productVariant.Size.size : ""}
                     </td>
                     <td className="px-6 py-4">
                       {item.productVariant ? item.productVariant.quantity : ""}
@@ -238,7 +239,7 @@ const ProductDetails = () => {
                     </td>
                   </tr>
                 </>
-              ))
+                ))
             ) : (
               <>
                 <tr>
@@ -247,7 +248,7 @@ const ProductDetails = () => {
                   </td>
                 </tr>
               </>
-            )}
+            ))}
           </tbody>
         </table>
 
@@ -265,14 +266,14 @@ const ProductDetails = () => {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="2"
+                  strokeWidth="2"
                   stroke="currentColor"
                   aria-hidden="true"
                   class="w-4 h-4"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
                   ></path>
                 </svg>
@@ -305,14 +306,14 @@ const ProductDetails = () => {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="2"
+                  strokeWidth="2"
                   stroke="currentColor"
                   aria-hidden="true"
                   className="w-4 h-4"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
                   ></path>
                 </svg>

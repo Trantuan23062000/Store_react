@@ -1,14 +1,10 @@
 import "./App.css";
-import {Routes,Route,useNavigate} from "react-router-dom"
+import {Routes,Route} from "react-router-dom"
 import Doashboard from "./pages/admin-doashboard/doashboard";
 import { Toaster } from 'react-hot-toast';
 
 function App() {
-  // const navigate = useNavigate()
-  // useEffect(()=>{
-  //     navigate('/admin-dashboard/productimage')
-  //     // eslint-disable-next-line react-hooks/exhaustive-deps
-  // },[])
+ 
   return (
     <div className="h-screen w-full">
       <Toaster /> 

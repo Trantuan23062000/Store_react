@@ -6,4 +6,4 @@ npx sequelize-cli model:generate --name ProductImage --attributes productId:UUID
 npx sequelize-cli model:generate --name Detail --attributes productId:UUID,producVariantId:UUID
 
 
-npx sequelize-cli model:generate --name productVariant --attributes color:string,codeColor:string,size:string,description:string,quantity:integer
+npx sequelize-cli model:generate --name size --attributes size:string,desciption:string

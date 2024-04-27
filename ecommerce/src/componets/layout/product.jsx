@@ -27,8 +27,10 @@ const Product = () => {
 
         <Description/>
       </div>
-
+         <div className="mt-12">
          <RelatedProduct/>
+         </div>
+         
     </div>
   );
 };

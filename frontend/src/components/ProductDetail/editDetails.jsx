@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {UpdateProductDetails} from "../../services/productDetails"
 import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 const EditDetails = (props) => {
   const [formData, setFormData] = useState({
@@ -10,7 +11,14 @@ const EditDetails = (props) => {
     description: "",
     quantity: "",
     ...props.data.productVariant,
+    ...props.data.productVariant.Size,
+    ...props.data.productVariant.Color,
+
   });
+
+  useEffect(()=>{
+     console.log(props);
+  },[])
 
 
   const handleInputChange = (e) => {
@@ -33,7 +41,6 @@ const EditDetails = (props) => {
     
     try {
       const response = await UpdateProductDetails(props.data.id,data)
-      console.log(response);
       if(response && response.data && response.data.EC === 0){
         toast.success(response.data.message)
         props.close()

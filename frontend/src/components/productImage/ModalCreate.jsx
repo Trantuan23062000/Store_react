@@ -194,7 +194,7 @@ const ModalCreate = (props) => {
                       <option selected>Choose category</option>
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
-                      <option value="Both men and women">
+                      <option value="All">
                         Both men and women
                       </option>
                     </select>
@@ -241,7 +241,6 @@ const ModalCreate = (props) => {
                       <div key={index} className="relative">
                         <img
                           src={preview}
-                          alt={`Image Preview ${index}`}
                           style={{
                             width: "150px",
                             height: "150px",

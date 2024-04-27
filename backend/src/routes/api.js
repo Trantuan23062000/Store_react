@@ -2,7 +2,6 @@ import express from "express";
 import multer from "multer";
 import BrandController from "../controller/brand/brandController";
 import Getlist from "../controller/images/getlist";
-
 import productController from "../controller/product/create";
 import UpdateProductImag from "../controller/product/updateProductImage";
 import ProductGetList from "../controller/product/getList";
@@ -17,6 +16,11 @@ import DeleteDetails from "../controller/productSizeColor/delete"
 import Search from "../controller/product/search"
 import SearchDetails from "../controller/productSizeColor/seacrh"
 import product from "../controller/productSizeColor/getall"
+import size from "../controller/size/get"
+import color from "../controller/color/get"
+import related from "../controller/productSizeColor/related"
+
+import index from "../controller/filter/index"
 
 const router = express.Router();
 const upload = multer({
@@ -56,8 +60,6 @@ const ApiRouter = (app) => {
   //getall
   router.get("/productDetails/getall",product.GetAll);
 
-
-
   //productImage
 
   router.post(
@@ -74,6 +76,13 @@ const ApiRouter = (app) => {
   router.get("/productImage/getList", ProductGetList.GetList);
   router.delete("/productImage/delete/:id", DeleteImage.deleteProduct);
   router.get('/productImage/search',Search.SearchProductdata)
+  router.get("/product/related",related.getRelatedProducts)
+
+
+  router.get("/size",size.getAllSize)
+  router.get("/color",color.getAllColor)
+
+  router.post("/products/filter", index.filterController);
 
   return app.use("/api/v1", router);
 };

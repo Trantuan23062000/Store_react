@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import ShowFilter from "./showFilter";
 import Filter from "./filter";
 import {
+  setCurrentPage,setSelectedProduct,fetchData
+} from "../../redux/slices/ productSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
   CgChevronRight,
   CgHeart,
   CgPushChevronLeft,
@@ -11,52 +15,46 @@ import {
 } from "react-icons/cg";
 import { FaHome, FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { GetProduct } from "../../api/shop/getproduct";
-import toast from "react-hot-toast";
 
 const Drawer = () => {
   const [showModal, setShowModal] = useState(false);
-  const [data, setdata] = useState([]);
-  const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [currentLimit] = useState(6);
+  const dispatch = useDispatch();
+  const data = useSelector((state) => state.products.data);
+  const filterData = useSelector((state) => state.filter.filterData); 
+  const totalPages = useSelector((state) => state.products.totalPages);
+  const currentPage = useSelector((state) => state.products.currentPage);
+  useSelector((state) => state.products.selectedProduct); // Lấy selectedProduct từ Redux Store
+  const currentLimit = useSelector((state) => state.products.currentLimit);
 
-  const fetchData = async () => {
-    const response = await GetProduct(currentPage, currentLimit);
-    if (response && response.data && response.data.EC === 0) {
-      setdata(response.data.productDetails);
-      setTotalPages(response.data.totalPages);
-      //console.log(response.data.product);
-    } else {
-      toast.error("no data !");
-    }
+  const displayData = filterData.length > 0 ? filterData : data;
+ 
+
+  const handleProductSelect = (item) => {
+    dispatch(setSelectedProduct(item));
+    localStorage.setItem("selectedProductDrawer", JSON.stringify(item));
   };
-
-  const HandleShow = (product) =>{
-     setdata(product)
-  }
 
 
   const handleChangPage = (pagenumber) => {
-    setCurrentPage(pagenumber);
+    dispatch(setCurrentPage(pagenumber)); // Sử dụng dispatch để cập nhật trạng thái Redux
   };
 
   const handlePreviousPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+      dispatch(setCurrentPage(currentPage - 1));
     }
   };
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
+      dispatch(setCurrentPage(currentPage + 1));
     }
   };
 
   useEffect(() => {
-    fetchData();
+    dispatch(fetchData({ currentPage, currentLimit }));
     // eslint-disable-next-line
-  }, [currentPage]);
+  }, [currentPage,currentLimit, dispatch]);
 
   const handleModalToggle = () => {
     setShowModal(!showModal);
@@ -106,8 +104,8 @@ const Drawer = () => {
 
           <div className="grid md:grid-cols-3 grid-cols-2 gap-6">
             {React.Children.toArray(
-              data.length > 0 &&
-                data.map((item) => (
+            displayData.length > 0 &&
+            displayData.map((item) => (
                   <>
                     <div
                       key={item.id}
@@ -123,7 +121,7 @@ const Drawer = () => {
 
                         <div
                           className="absolute inset-0 bg-black bg-opacity-40 flex items-center 
-                            justify-center gap-2 opacity-0 group-hover:opacity-100 transition"
+                              justify-center gap-2 opacity-0 group-hover:opacity-100 transition"
                         >
                           <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
                             <CgShoppingCart />
@@ -131,9 +129,12 @@ const Drawer = () => {
                           <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
                             <CgHeart />
                           </div>
-                          <div onClick={()=>HandleShow(item)} className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
-                            <Link to="/product">
-                              <CgSearch/>
+                          <div
+                          onClick={()=>handleProductSelect(item)}
+                            className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0"
+                          >
+                            <Link to={{ pathname: `/product/${item.id}` }}>
+                              <CgSearch />
                             </Link>
                           </div>
                         </div>

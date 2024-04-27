@@ -58,8 +58,8 @@ const ModalEdit = (props) => {
       }
     });
 
-    if (selectedImages.length + formData.images.length > 3) {
-      toast.error("You can only select up to 3 images.");
+    if (selectedImages.length + formData.images.length > 4) {
+      toast.error("You can only select up to 4 images.");
       return;
     }
 
@@ -241,7 +241,7 @@ const ModalEdit = (props) => {
                         <option selected>Choose category</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
-                        <option value="Both men and women">
+                        <option value="All">
                           Both men and women
                         </option>
                       </select>
@@ -289,7 +289,6 @@ const ModalEdit = (props) => {
                         <div key={index} className="relative">
                           <img
                             src={url}
-                            alt={`Image Preview ${index}`}
                             style={{
                               width: "150px",
                               height: "150px",
@@ -330,7 +329,6 @@ const ModalEdit = (props) => {
                             <div key={index} className="relative">
                               <img
                                 src={url}
-                                alt={`Image Preview ${index}`}
                                 style={{
                                   width: "150px",
                                   height: "150px",

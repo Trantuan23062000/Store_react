@@ -13,9 +13,12 @@ import Forgot from "./componets/auth/forgot";
 import Contact from "./componets/layout/contact";
 import Navbar from "./componets/home/navbar"
 import { Toaster } from 'react-hot-toast';
+import { Provider } from 'react-redux';
+import store from "./redux/store";
 
 function App() {
   return (
+    <Provider store={store}>
     <Router>
       <div className="flex flex-col h-screen">
         
@@ -26,7 +29,7 @@ function App() {
             <Routes>
               <Route exact path="/" element={<Home />} />
               <Route exact path="/shop" element={<Shop />} />
-              <Route exact path="/product" element={<Product/>}/>
+              <Route exact path="/product/:id" element={<Product/>}/>
               <Route exact path="/cart" element={<Cart/>}/>
               <Route exact path="/checkout" element={<Order/>}/>
               <Route exact path="/login" element={<Login/>}/>
@@ -40,6 +43,7 @@ function App() {
         <Copy />
       </div>
     </Router>
+    </Provider>
   );
 }
 

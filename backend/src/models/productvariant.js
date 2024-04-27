@@ -8,6 +8,8 @@ module.exports = (sequelize, DataTypes) => {
         through: "Detail",
         foreignKey: "productVariantId",
       });
+      productVariant.belongsTo(models.Colors,{ foreignKey: 'colorId' })
+      productVariant.belongsTo(models.Sizes,{ foreignKey: 'sizeId' })
     }
   }
   productVariant.init(
@@ -17,10 +19,8 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4,
       },
-      color: DataTypes.STRING,
-      codeColor: DataTypes.STRING,
-      size: DataTypes.STRING,
-      description: DataTypes.STRING,
+      colorId: DataTypes.STRING,
+      sizeId: DataTypes.STRING,
       quantity: DataTypes.INTEGER,
     },
     {

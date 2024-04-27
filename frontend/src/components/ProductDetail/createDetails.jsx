@@ -4,58 +4,55 @@ import {
   getImageDetail,
   CreateProductDetails,
 } from "../../services/productDetails";
-import { GetListImage } from "../../services/productImage";
 import toast from "react-hot-toast";
 import Select from "react-select";
 
 const CreateDetails = (props) => {
   const [dataPro, setDataPro] = useState([]);
-  const [dataIm, setDataIm] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
   const [formData, setFormData] = useState({
     color: "",
-    code: "",
+    codeColor: "",
     size: "",
     description: "",
     quantity: "",
   });
-  
 
   const handleInputChange = (e) => {
-    const fieldName = e.target.name;
-    const fieldValue = e.target.value;
+    const { name, value } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [fieldName]: fieldValue,
+      [name]: value,
     }));
   };
 
   const fetchProduct = async () => {
     try {
       const response = await getProduct();
-      if (response && response.data && response.data.EC === 0) {
-        setDataPro(response.data.product);
-      } else {
-        toast.error("Failed to fetch product data!");
-      }
+      setDataPro(response.data.product);
     } catch (error) {
       console.error("Error fetching product data:", error);
       toast.error("Failed to fetch product data!");
     }
   };
 
-  const fetchImage = async () => {
+  
+
+  const handleChange = async (selectedOption) => {
+    setSelectedProduct(selectedOption);
+    const selectedProductData = dataPro.find(
+      (product) => product.id === selectedOption.value
+    );
+    const imageId = selectedProductData?.imageId;
+
     try {
-      const response = await GetListImage();
-      if (response && response.data && response.data.EC === 0) {
-        setDataIm(response.data.images.images);
-      } else {
-        toast.error("Failed to fetch image data!");
-      }
+      const imageDetailResponse = await getImageDetail(imageId);
+      const imageURLs = imageDetailResponse.data.image.URL;
+      setImageUrls(imageURLs);
     } catch (error) {
-      console.error("Error fetching image data:", error);
-      toast.error("Failed to fetch image data!");
+      console.error("Error fetching image details:", error);
+      toast.error("Failed to fetch image details!");
     }
   };
 
@@ -63,28 +60,7 @@ const CreateDetails = (props) => {
     value: product.id,
     label: product.name,
   }));
-
-  const handleChange = async (selectedOption) => {
-    if (selectedOption) {
-      setSelectedProduct(selectedOption);
-      const selectedProductData = dataPro.find(
-        (product) => product.id === selectedOption.value
-      );
-      const imageId = selectedProductData?.imageId;
-
-      try {
-        const imageDetailResponse = await getImageDetail(imageId);
-        const imageURLs = imageDetailResponse.data.image.URL;
-        setImageUrls(imageURLs);
-      } catch (error) {
-        console.error("Error fetching image details:", error);
-        toast.error("Failed to fetch image details!");
-      }
-    } else {
-      setSelectedProduct(null);
-      setImageUrls([]);
-    }
-  };
+  
 
   const handleSubmit = async () => {
     try {
@@ -107,7 +83,7 @@ const CreateDetails = (props) => {
       };
 
       const response = await CreateProductDetails(data);
-      if (response && response.data && response.data.EC === 0) {
+      if (response.data.EC === 0) {
         toast.success(response.data.message);
         props.close();
         props.fetch();
@@ -122,16 +98,13 @@ const CreateDetails = (props) => {
 
   useEffect(() => {
     fetchProduct();
-    fetchImage();
   }, []);
 
   let imageUrlsArray = [];
   try {
     imageUrlsArray = JSON.parse(imageUrls)
-  } catch (error) {
-   
-  }
-
+  } catch (error) {}
+  
   return (
     <div>
       <div className="overflow-x-hidden p-24 justify-center overflow-y-auto fixed inset-0 z-50 items-center">
@@ -248,7 +221,6 @@ const CreateDetails = (props) => {
                       <img
                         key={imageUrl} // Sử dụng URL hình ảnh làm key
                         src={imageUrl}
-                        alt={`Image ${imageUrl}`}
                         style={{
                           width: "150px",
                           height: "150px",

@@ -282,7 +282,7 @@ const Brand = () => {
                   >
                     <path
                       stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinejoin="round"
                       d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
                     ></path>
                   </svg>
@@ -322,7 +322,7 @@ const Brand = () => {
                   >
                     <path
                       stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinejoin="round"
                       d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
                     ></path>
                   </svg>

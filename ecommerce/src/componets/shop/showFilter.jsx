@@ -1,45 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect} from "react";
 import { CgClose } from "react-icons/cg";
-import { GetBrands } from "../../api/shop/getproduct";
-import { GetSize } from "../../api/shop/getsize";
-import { GetColor } from "../../api/shop/getcolor";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchBrand,fetchSize,fetchColor
+
+  
+} from "../../redux/slices/filterReducer"
 
 
 
 const ShowFilter = (props) => {
-  const [dataBrand, setDataBrand] = useState([]);
-  const [size, setSize] = useState([]);
-  const [color,setColor] = useState([])
-
-
-  const fetchSize = async () => {
-    const response = await GetSize();
-    if(response && response.data && response.data.EC === 0){
-      setSize(response.data.size)
-    }
-  };
-
-  const fetchColor = async()=>{
-    const response = await GetColor()
-    if(response && response.data && response.data.EC === 0){
-      setColor(response.data.color)
-    }
-  }
-
-
-
-  const fetchBrand = async () => {
-    const response = await GetBrands();
-    if(response && response.data && response.data.EC === 0){
-      setDataBrand(response.data.DT)
-    }
-  };
-
+  const dispatch = useDispatch();
+  const brands = useSelector((state) => state.filter.brands)||[];
+  const sizes = useSelector((state) => state.filter.sizes)||[];
+  const colors = useSelector((state) => state.filter.colors)||[];
+ 
   useEffect(()=>{
-    fetchBrand()
-    fetchColor()
-    fetchSize()
-  },[])
+    dispatch(fetchBrand())
+    dispatch(fetchSize())
+    dispatch(fetchColor())  
+    // eslint-disable-next-line
+  },[dispatch])
   return (
     <div className="top-0 left-0 right-0 z-50 flex justify-center items-center">
       <div className="bg-gray-900 bg-opacity-50 absolute"></div>
@@ -97,7 +78,7 @@ const ShowFilter = (props) => {
               >
                 Choose a Brand
               </option>
-              {React.Children.toArray(dataBrand.map((item)=>(
+              {React.Children.toArray(brands.map((item)=>(
                   <option value={item.id}>{item.name}</option>
               )))}
              
@@ -132,7 +113,7 @@ const ShowFilter = (props) => {
               size
             </h3>
             <div className="flex space-x-4 items-center">
-              {React.Children.toArray(size.map((item)=>(
+              {React.Children.toArray(sizes.map((item)=>(
                   <div className="flex">
                   <div className="flex items-center">
                     <input
@@ -152,7 +133,7 @@ const ShowFilter = (props) => {
               Color
             </h3>
             <div className="flex items-center gap-2">
-              {React.Children.toArray(color.map((item)=>(
+              {React.Children.toArray(colors.map((item)=>(
                    <div className="color-selector">
                    <input type="radio" name="color" id="red" className="hidden" />
                    <label

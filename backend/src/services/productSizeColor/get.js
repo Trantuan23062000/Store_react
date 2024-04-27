@@ -15,10 +15,14 @@ const getProductDetails = async (pageNumber, pageSize) => {
     const productDetails = await db.Detail.findAll({
       include: [
         {
-          model: db.Products,
+          model: db.Products,include:[{ model: db.Images},{model: db.Brands}],
         },
         {
-          model: db.productVariant,
+          model: db.productVariant
+          ,include:[
+            { model: db.Sizes},
+            { model: db.Colors},
+          ]
         },
       ],
       limit: pageSize,

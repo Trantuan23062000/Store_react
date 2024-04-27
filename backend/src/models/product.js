@@ -4,7 +4,7 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Product extends Model {
     static associate(models) {
-      Product.belongsTo(models.Brands)
+      Product.belongsTo(models.Brands,{ foreignKey: 'brandId' })
       Product.belongsTo(models.Images, { foreignKey: 'imageId' });
       Product.belongsToMany(models.productVariant, { through: 'Detail', foreignKey: 'productId' });
       Product.belongsToMany(models.Orders,{through:'OrderDetails'})
