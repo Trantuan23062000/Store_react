@@ -22,7 +22,7 @@ const Filter = () => {
   const [selectedCategory, setSelectedCategory] = useState(false);
   const [selectedMinPrice, setSelectedMinPrice] = useState(null);
   const [selectedMaxPrice, setSelectedMaxPrice] = useState(null);
-
+  
   useEffect(() => {
     dispatch(fetchBrand());
     dispatch(fetchColor());

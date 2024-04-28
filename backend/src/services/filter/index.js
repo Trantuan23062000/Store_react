@@ -1,7 +1,7 @@
 import db from "../../models/index"
 const filterData = async (filters) => {
   try {
-    const { brandId, sizeId, colorId, minPrice, maxPrice, category } = filters;
+    const { brandId, sizeId, colorId, minPrice, maxPrice, category,pageNumber, pageSize } = filters;
 
     // Khởi tạo đối tượng include để sử dụng trong truy vấn Sequelize
     const include = [
@@ -22,7 +22,7 @@ const filterData = async (filters) => {
       include.push({
         model: db.productVariant,
         where: { sizeId: sizeId },
-        include: [{ model: db.Sizes }, { model: db.Colors }]
+        include: [{ model: db.Sizes }]
       });
     }
 
@@ -31,7 +31,7 @@ const filterData = async (filters) => {
       include.push({
         model: db.productVariant,
         where: { colorId: colorId },
-        include: [{ model: db.Colors }, { model: db.Sizes }]
+        include: [{ model: db.Colors }]
       });
     }
 
@@ -40,7 +40,7 @@ const filterData = async (filters) => {
       include.push({
         model: db.Products,
         where: { price: { [db.Sequelize.Op.gte]: minPrice, [db.Sequelize.Op.lte]: maxPrice } },
-        include: [{ model: db.Brands },{model:db.Images}]
+        include: [{ model: db.Brands }]
       });
     }
 
@@ -49,7 +49,7 @@ const filterData = async (filters) => {
       include.push({
         model: db.Products,
         where: { category: category },
-        include: [{ model: db.Brands },{model:db.Images}]
+        include: [{ model: db.Brands }]
       });
     }
 

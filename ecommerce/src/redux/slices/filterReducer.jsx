@@ -3,6 +3,7 @@ import { GetBrands } from "../../api/shop/getproduct";
 import { GetSize } from "../../api/shop/getsize";
 import { GetColor } from "../../api/shop/getcolor";
 import { FilterData} from "../../api/shop/filter";
+import { setTotalPages } from "./ productSlice"; 
 
 export const filterSlice = createSlice({
   name: "filter",
@@ -89,6 +90,8 @@ export const {
   // export các reducers cho các actions khác
 } = filterSlice.actions;
 
+
+
 export const fetchBrand = () => async (dispatch) => {
   try {
     dispatch(fetchBrandsRequest());
@@ -132,13 +135,15 @@ export const fetchColor = () => async (dispatch) => {
 };
 
 
-export const fetchFilterData = ( {brandId, sizeId, colorId, minPrice, maxPrice, category} ) => async (dispatch) => {
+export const fetchFilterData = ({ brandId, sizeId, colorId, minPrice, maxPrice, category, pageSize, pageNumber }) => async (dispatch) => {
   try {
     dispatch(fetchFilterDataRequest());
-    const response = await FilterData( {brandId, sizeId, colorId, minPrice, maxPrice, category} );
-    //console.log(response);
+    const response = await FilterData({ brandId, sizeId, colorId, minPrice, maxPrice, category, pageSize, pageNumber });
     if (response && response.data && response.data.EC === 0) {
       dispatch(fetchFilterDataSuccess(response.data.data));
+      // Cập nhật số trang mới
+      const totalPages = Math.ceil(response.data.data.length / pageSize);
+      dispatch(setTotalPages(totalPages));
     } else {
       dispatch(fetchFilterDataFailure("Failed to fetch filter data"));
     }

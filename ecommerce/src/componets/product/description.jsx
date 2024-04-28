@@ -6,13 +6,15 @@ import {
   setSelectedProduct, // Import action từ slice của bạn
 } from "../../redux/slices/ productSlice";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchRelated } from "../../redux/slices/relatedProduct";
+import { getByName } from "../../redux/slices/relatedProduct";
 
-const Description = () => {
+const Description = (props) => {
   const [initialized, setInitialized] = useState(false);
   const data = useSelector(selectSelectedProduct);
   const dispatch = useDispatch(); // Lấy hàm dispatch từ Redux store
-  const { dataRelated } = useSelector((state) => state.dataRelated); // Lấy trạng thái từ store
+  const dataProductName = useSelector(
+    (state) => state.dataRelated.dataProductName
+  ); // Lấy trạng thái từ store
 
   // Khôi phục dữ liệu từ localStorage khi component được render lại sau khi reload trang
   useEffect(() => {
@@ -20,7 +22,7 @@ const Description = () => {
       const storedProduct = localStorage.getItem("selectedProductDrawer");
       const related = localStorage.getItem("selectedProductDrawer");
       if (related) {
-        dispatch(fetchRelated(JSON.parse(related)));
+        dispatch(getByName(JSON.parse(related)));
       }
       if (storedProduct) {
         dispatch(setSelectedProduct(JSON.parse(storedProduct)));
@@ -30,21 +32,20 @@ const Description = () => {
     // eslint-disable-next-line
   }, [initialized]);
 
+
   useEffect(() => {
-    JSON.parse(
-      localStorage.getItem("selectedProductDrawer")
-    );
-    dispatch(fetchRelated());
+    JSON.parse(localStorage.getItem("selectedProductDrawer"));
+    dispatch(getByName(props.detailId));
 
     // eslint-disable-next-line
-  }, [dispatch]);
+  }, [dispatch, props.detailId]);
 
   const handleProductSelect = (item) => {
     localStorage.setItem("selectedProductDrawer", JSON.stringify(item));
     window.location.reload();
   };
 
-  if (!data || !dataRelated) {
+  if (!data || !getByName) {
     return <div>Loading...</div>;
   }
 
@@ -106,59 +107,69 @@ const Description = () => {
 
           <div className="flex justify-center text-center items-center gap-2 mt-4">
             <h3 className="text-sm text-gray-800 uppercase mb-1">Size:</h3>
-            {React.Children.toArray(dataRelated.map((item)=>(
-                  <div onClick={() => handleProductSelect(item)} className="flex justify-center text-center items-center gap-2">
-                  <div className="size-selector">
-                  <Link to={{ pathname: `/product/${item.id}` }}>
-                    <input
-                      type="radio"
-                      name="size"
-                      id="size-xs"
-                      className="hidden"
-
-                    />
-                    <label
-                      htmlFor="size-xs"
-                      className="text-xs border border-gray-200 rounded-sm h-6 w-6 flex items-center justify-center cursor-pointer shadow-sm text-gray-600"
-                    >
-                      {item.productVariant.Size.size.substring(2)}
-                    </label>
-                    </Link>
+            {dataProductName.length ===0 ?(
+              <div>Product only Size</div>
+            ):(
+              React.Children.toArray(
+                dataProductName.map((item) => (
+                  <div
+                    onClick={() => handleProductSelect(item)}
+                    className="flex justify-center text-center items-center gap-2"
+                  >
+                    <div className="size-selector">
+                      <Link to={{ pathname: `/product/${item.id}` }}>
+                        <input
+                          type="radio"
+                          name="size"
+                          id="size-xs"
+                          className="hidden"
+                        />
+                        <label
+                          htmlFor="size-xs"
+                          className="text-xs border border-gray-200 rounded-sm h-6 w-6 flex items-center justify-center cursor-pointer shadow-sm text-gray-600"
+                        >
+                          {item.productVariant.Size.size.substring(2)}
+                        </label>
+                      </Link>
+                    </div>
                   </div>
-                 
-                </div>
-            )))}
+              ))
+            )
+          )}
+           
           </div>
           <div className="mt-4 ">
             <h3 className="text-xl text-gray-800 mb-3 uppercase font-medium">
               Color
             </h3>
             <div className="justify-center text-center items-center flex">
-              {React.Children.toArray(
-                dataRelated.map((item) => (
-                  <div
-                    onClick={() => handleProductSelect(item)}
-                    className="color-selector"
-                  >
-                    <Link to={{ pathname: `/product/${item.id}` }}>
-                    <input
-                      type="radio"
-                      name="color"
-                      id="red"
-                      className="hidden"
-                    />
-                    <label
-                      htmlFor="red"
-                      className="border border-gray-200 rounded-full h-6 w-6  cursor-pointer shadow-sm block"
-                      style={{
-                        backgroundColor: `${item.productVariant.Color.codeColor}`,
-                      }}
+              {dataProductName.length === 0 ? (
+                <div>Product only color</div>
+              ) : (
+                React.Children.toArray(
+                  dataProductName.map((item) => (
+                    <div
+                      onClick={() => handleProductSelect(item)}
+                      className="color-selector"
                     >
-                      
-                    </label>
-                    </Link>
-                  </div>
-                ))
+                      <Link to={{ pathname: `/product/${item.id}` }}>
+                        <input
+                          type="radio"
+                          name="color"
+                          id="red"
+                          className="hidden"
+                        />
+                        <label
+                          htmlFor="red"
+                          className="border border-gray-200 rounded-full h-6 w-6  cursor-pointer shadow-sm block"
+                          style={{
+                            backgroundColor: `${item.productVariant.Color.codeColor}`,
+                          }}
+                        ></label>
+                      </Link>
+                    </div>
+                  ))
+                )
               )}
             </div>
           </div>
@@ -199,7 +210,7 @@ const Description = () => {
                 </tr>
                 <tr>
                   <th className="py-2 px-4 border border-gray-300 w-40 font-medium">
-                    Size 
+                    Size
                   </th>
                   <th className="py-2 px-4 border border-gray-300">
                     {data.productVariant.Size.size}

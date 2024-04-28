@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { FaBars, FaShoppingCart, FaSearch } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 
@@ -26,6 +26,26 @@ const reducer = (state, action) => {
 const Navbar = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const location = useLocation();
+
+  const [cartItems, setCartItems] = useState([]);
+  const [totalQuantity, setTotalQuantity] = useState(0);
+
+  useEffect(() => {
+    // Lấy dữ liệu từ local storage
+    const storedCartItems = JSON.parse(localStorage.getItem("cartItems"));
+    if (storedCartItems) {
+      setCartItems(storedCartItems);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Tính tổng số lượng các mặt hàng trong giỏ hàng
+    const newTotalQuantity = cartItems.reduce(
+      (total, item) => total + item.productVariant.quantity,
+      0
+    );
+    setTotalQuantity(newTotalQuantity);
+  }, [cartItems]);
 
   const hideDropdown = () => {
     dispatch({ type: "HIDE_DROPDOWN" });
@@ -61,15 +81,17 @@ const Navbar = () => {
             <div className="text-white hover:text-yellow-300 text-lg font-semibold">
               <Link to="/">
                 {" "}
-                <img src="/images/logo.png" alt="logo" className="w-20 h-10 rounded-lg" />
+                <img
+                  src="/images/logo.png"
+                  alt="logo"
+                  className="w-20 h-10 rounded-lg"
+                />
               </Link>
             </div>
           </div>
           {!isMobile && (
             <div className="hidden md:flex justify-center w-full">
-              <div
-                className="text-white hover:text-yellow-300 px-3 py-2 rounded-md text-lg font-semibold"
-              >
+              <div className="text-white hover:text-yellow-300 px-3 py-2 rounded-md text-lg font-semibold">
                 <Link to="/shop"> SHOP</Link>
               </div>
               <div className="text-white hover:text-yellow-300 px-3 py-2 rounded-md text-lg font-semibold">
@@ -111,6 +133,7 @@ const Navbar = () => {
             <div className="text-white hover:text-yellow-300">
               <Link to="/cart">
                 <FaShoppingCart size={24} />
+                <span>({totalQuantity})</span>
               </Link>
             </div>
             <div className="ml-3 relative">
@@ -179,9 +202,14 @@ const Navbar = () => {
                 </div>
               )}
             </div>
-            <div className="text-white hover:text-yellow-300 ml-4">
-              <Link to="/cart">
+            <div className="text-white hover:text-yellow-300 ml-4 relative">
+              <Link to="/cart" className="relative">
                 <FaShoppingCart size={24} />
+                {totalQuantity > 0 && (
+                  <span className="bg-yellow-300 text-red-500 rounded-full h-5 w-5 flex items-center justify-center absolute -top-3 -right-2 font-bold">
+                    {totalQuantity}
+                  </span>
+                )}
               </Link>
             </div>
             <div className="ml-3 relative">

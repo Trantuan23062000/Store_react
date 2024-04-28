@@ -19,6 +19,7 @@ import product from "../controller/productSizeColor/getall"
 import size from "../controller/size/get"
 import color from "../controller/color/get"
 import related from "../controller/productSizeColor/related"
+import byName from"../controller/productSizeColor/getbyname"
 
 import index from "../controller/filter/index"
 
@@ -77,7 +78,8 @@ const ApiRouter = (app) => {
   router.delete("/productImage/delete/:id", DeleteImage.deleteProduct);
   router.get('/productImage/search',Search.SearchProductdata)
   router.get("/product/related",related.getRelatedProducts)
-
+  router.get("/product/getByName/:detailId",byName.getByNameProduct)
+  
 
   router.get("/size",size.getAllSize)
   router.get("/color",color.getAllColor)
