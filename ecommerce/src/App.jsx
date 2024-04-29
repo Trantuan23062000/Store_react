@@ -30,7 +30,7 @@ function App() {
               <Route exact path="/" element={<Home />} />
               <Route exact path="/shop" element={<Shop />} />
               <Route exact path="/product/:id" element={<Product/>}/>
-              <Route exact path="/cart" element={<Cart/>}/>
+              <Route exact path="/cart" element={<Cart component={Cart}/>}/>
               <Route exact path="/checkout" element={<Order/>}/>
               <Route exact path="/login" element={<Login/>}/>
               <Route exact path="/register" element={<Register/>}/>

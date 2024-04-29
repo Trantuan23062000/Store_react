@@ -73,31 +73,31 @@ const Filter = () => {
   };
 
   const handleChangeBrand = (id) => {
-    console.log("Selected Brand ID:", id);
+    //console.log("Selected Brand ID:", id);
     setSelectedBrandId(id);
     handleFilter(); // Gọi hàm handleFilter khi brand thay đổi
   };
 
   const handleChangeSize = (id) => {
-    console.log("Selected Size ID:", id);
+    //log("Selected Size ID:", id);
     setSelectedSizeId(id);
     handleFilter(); // Gọi hàm handleFilter khi size thay đổi
   };
 
   const handleChangeColor = (id) => {
-    console.log("Selected Color ID:", id);
+    //console.log("Selected Color ID:", id);
     setSelectedColorId(id);
     handleFilter(); // Gọi hàm handleFilter khi color thay đổi
   };
 
   const handleChangeCategory = (category) => {
-    console.log("Selected Category:", category);
+    //console.log("Selected Category:", category);
     setSelectedCategory(category);
     handleFilter(); // Gọi hàm handleFilter khi category thay đổi
   };
 
   const handleChangePrice = (minPrice, maxPrice) => {
-    console.log("Selected price:", minPrice, maxPrice);
+    //console.log("Selected price:", minPrice, maxPrice);
     setSelectedMinPrice(minPrice);
     setSelectedMaxPrice(maxPrice);
     handleFilter(); // Gọi hàm handleFilter khi giá cả thay đổi
@@ -267,7 +267,7 @@ const Filter = () => {
             </div>
             <button
               onClick={handleClear}
-              className="w-full bg-black h-6 text-white hover:text-yellow-300 rounded-xl hover:bg-yelow-500"
+              className="w-full bg-black h-6 font-bold text-yellow-300 hover:text-red-500 rounded-xl hover:bg-yelow-500"
             >
               {" "}
               Clear filter

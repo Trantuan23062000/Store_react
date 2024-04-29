@@ -1,6 +1,8 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { FaBars, FaShoppingCart, FaSearch } from "react-icons/fa";
+import { FaBars, FaShoppingCart, FaSearch, FaTrash } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { updateCartdata, selectCartItems } from "../../redux/slices/cartSlice";
 
 const initialState = {
   isOpen: false,
@@ -25,27 +27,40 @@ const reducer = (state, action) => {
 
 const Navbar = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [initialized, setInitialized] = useState(false);
   const location = useLocation();
-
-  const [cartItems, setCartItems] = useState([]);
+  const cartItems = useSelector(selectCartItems);
   const [totalQuantity, setTotalQuantity] = useState(0);
+  const [isCartDropdownOpen, setIsCartDropdownOpen] = useState(false);
 
   useEffect(() => {
-    // Lấy dữ liệu từ local storage
-    const storedCartItems = JSON.parse(localStorage.getItem("cartItems"));
-    if (storedCartItems) {
-      setCartItems(storedCartItems);
-    }
-  }, []);
-
-  useEffect(() => {
-    // Tính tổng số lượng các mặt hàng trong giỏ hàng
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
     const newTotalQuantity = cartItems.reduce(
       (total, item) => total + item.productVariant.quantity,
       0
     );
     setTotalQuantity(newTotalQuantity);
-  }, [cartItems]);
+  }, [cartItems]); // Lưu trữ dữ liệu vào Local Storage mỗi khi cartItems thay đổi và tính toán lại totalQuantity
+
+  useEffect(() => {
+    const storedCartItems = localStorage.getItem("cartItems");
+    if (storedCartItems) {
+      dispatch(updateCartdata(JSON.parse(storedCartItems)));
+    }
+  }, [dispatch, cartItems]);
+
+  const toggleCartDropdown = () => {
+    setIsCartDropdownOpen(!isCartDropdownOpen);
+  };
+
+  useEffect(() => {
+    const storedCartItems = localStorage.getItem("cartItems");
+    if (storedCartItems && !initialized) {
+      dispatch(updateCartdata(JSON.parse(storedCartItems)));
+      setInitialized(true);
+    }
+    // eslint-disable-next-line
+  }, []);
 
   const hideDropdown = () => {
     dispatch({ type: "HIDE_DROPDOWN" });
@@ -202,16 +217,38 @@ const Navbar = () => {
                 </div>
               )}
             </div>
-            <div className="text-white hover:text-yellow-300 ml-4 relative">
-              <Link to="/cart" className="relative">
-                <FaShoppingCart size={24} />
-                {totalQuantity > 0 && (
-                  <span className="bg-yellow-300 text-red-500 rounded-full h-5 w-5 flex items-center justify-center absolute -top-3 -right-2 font-bold">
-                    {totalQuantity}
-                  </span>
-                )}
-              </Link>
+            <div className="text-white ml-4 relative">
+              <FaShoppingCart size={24} onClick={toggleCartDropdown} />
+              {totalQuantity > 0 && (
+                <span className="bg-yellow-300 text-red-500 rounded-full h-5 w-5 flex items-center justify-center absolute -top-3 -right-2 font-bold">
+                  {totalQuantity}
+                </span>
+              )}
+              {isCartDropdownOpen && (
+                <div className="origin-top-right absolute right-0 mt-2 w-72 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                  <div className="py-4 ml-3 font-semibold justify-between">
+                    {cartItems.map((item) => (
+                      <div key={item.id}>
+                        <div className="flex justify-around">
+                          <div className="text-black">
+                            {item.Product.name} X {item.productVariant.quantity}{" "}
+                          </div>
+                          <img
+                            src={JSON.parse(item.Product.Image.URL)[0]}
+                            alt="product 1"
+                            className="w-8 h-8"
+                          />
+                          <div className="text-black">
+                            <FaTrash />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
+
             <div className="ml-3 relative">
               <div>
                 <button

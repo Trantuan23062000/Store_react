@@ -20,7 +20,6 @@ export const fetchData = createAsyncThunk(
   }
 );
 
-
 export const productSlice = createSlice({
   name: 'products',
   initialState: {
@@ -46,10 +45,13 @@ export const productSlice = createSlice({
     setSelectedProduct: (state, action) => {
       state.selectedProduct = action.payload;
     },
+    setFilterData: (state, action) => {
+      state.filterData = action.payload;
+    },
   },
 });
 
-export const { setData, setTotalPages, setCurrentPage,setCurrentLimit, setSelectedProduct } = productSlice.actions;
+export const { setData, setTotalPages, setCurrentPage,setCurrentLimit, setSelectedProduct,setFilterData } = productSlice.actions;
 export const selectProductData = (state) => state.products.data;
 export const selectTotalPages = (state) => state.products.totalPages;
 export const selectCurrentPage = (state) => state.products.currentPage;

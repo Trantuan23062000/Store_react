@@ -7,14 +7,58 @@ import {
 } from "../../redux/slices/ productSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { getByName } from "../../redux/slices/relatedProduct";
+import { addToCart, updateCart,selectCartItems } from "../../redux/slices/cartSlice";
+import toast from "react-hot-toast";
 
 const Description = (props) => {
   const [initialized, setInitialized] = useState(false);
+  const cartItems = useSelector(selectCartItems);
   const data = useSelector(selectSelectedProduct);
   const dispatch = useDispatch(); // Lấy hàm dispatch từ Redux store
   const dataProductName = useSelector(
     (state) => state.dataRelated.dataProductName
   ); // Lấy trạng thái từ store
+
+  const handleAddToCart = (data) => {
+    // Kiểm tra xem số lượng sản phẩm đã có trong giỏ hàng
+    const existingItemIndex = cartItems.findIndex(
+      (cartItem) => cartItem.id === data.id
+    );
+
+    // Nếu sản phẩm đã có trong giỏ hàng
+    if (existingItemIndex !== -1) {
+      // Tạo một bản sao của sản phẩm đã có trong giỏ hàng
+      const existingItem = { ...cartItems[existingItemIndex] };
+      // Tính tổng số lượng sản phẩm sau khi thêm vào giỏ hàng
+      const totalQuantity =
+        existingItem.productVariant.quantity + 1;
+      // Kiểm tra số lượng sản phẩm mới và số lượng hiện có
+      if (totalQuantity > data.productVariant.quantity) {
+        // Nếu số lượng mới vượt quá số lượng hiện có, thông báo và không thêm vào giỏ hàng
+        toast.error(
+          `The quantity has exceeded the limit product ${data.Product.name}: ${data.productVariant.quantity}`
+        );
+        return;
+      }
+      // Tạo một bản sao của đối tượng sản phẩm
+      const updatedProductVariant = { ...existingItem.productVariant };
+      // Tăng số lượng sản phẩm lên 1
+      updatedProductVariant.quantity += 1;
+      // Cập nhật lại đối tượng sản phẩm trong sản phẩm đã có trong giỏ hàng
+      const updatedItem = { ...existingItem, productVariant: updatedProductVariant };
+      // Cập nhật sản phẩm trong giỏ hàng với sản phẩm đã được cập nhật số lượng
+      const updatedCartItems = [...cartItems];
+      updatedCartItems[existingItemIndex] = updatedItem;
+      // Cập nhật giỏ hàng trong Redux
+      dispatch(updateCart(updatedCartItems));
+      toast.success(`Product ${data.Product.name} added cart`);
+    } else {
+      // Nếu sản phẩm chưa có trong giỏ hàng, thêm mới vào giỏ hàng với số lượng là 1
+      const newItem = { ...data, productVariant: { ...data.productVariant, quantity: 1 } };
+      dispatch(addToCart(newItem));
+      toast.success(`Product ${data.Product.name} added cart`);
+    }
+  };
 
   // Khôi phục dữ liệu từ localStorage khi component được render lại sau khi reload trang
   useEffect(() => {
@@ -230,7 +274,7 @@ const Description = (props) => {
         </div>
 
         <div className="mt-6 flex justify-center gap-3 sm:mx-auto pb-5 pt-5">
-          <div className="bg-black text-white px-8 py-2 font-medium rounded-full uppercase flex items-center gap-2 hover:bg-yellow-500 hover:text-red-500 transition duration-300 ease-in-out transform hover:scale-120">
+          <div onClick={() => handleAddToCart(data)} className="bg-black text-white px-8 py-2 font-medium rounded-full uppercase flex items-center gap-2 hover:bg-yellow-500 hover:text-red-500 transition duration-300 ease-in-out transform hover:scale-120">
             <FaShoppingCart /> Add to cart
           </div>
           <div className="bg-black text-white px-8 py-2 font-medium rounded-full uppercase flex items-center gap-2 hover:bg-yellow-500 hover:text-red-500 transition duration-300 ease-in-out transform hover:scale-120">

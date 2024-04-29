@@ -4,7 +4,8 @@ import Filter from "./filter";
 import {
   setCurrentPage,
   setSelectedProduct,
-  fetchData,setTotalPages
+  fetchData,
+  setTotalPages,
 } from "../../redux/slices/ productSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -15,13 +16,12 @@ import {
   CgSearch,
   CgShoppingCart,
 } from "react-icons/cg";
+import { addToCart, updateCart, updateCartdata,selectCartItems } from "../../redux/slices/cartSlice";
 import { FaHome, FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
-
 const Drawer = () => {
-  const [cartItems, setCartItems] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
   const originalData = useSelector((state) => state.products.data);
@@ -29,46 +29,49 @@ const Drawer = () => {
   const totalPages = useSelector((state) => state.products.totalPages);
   const currentPage = useSelector((state) => state.products.currentPage);
   const currentLimit = useSelector((state) => state.products.currentLimit);
+  const cartItems = useSelector(selectCartItems);
+  const [initialized, setInitialized] = useState(false);
 
   const handleAddToCart = (item) => {
-    const existingItemIndex = cartItems.findIndex((cartItem) => cartItem.id === item.id);
+    // Kiểm tra xem số lượng sản phẩm đã có trong giỏ hàng
+    const existingItemIndex = cartItems.findIndex(
+      (cartItem) => cartItem.id === item.id
+    );
 
+    // Nếu sản phẩm đã có trong giỏ hàng
     if (existingItemIndex !== -1) {
+      // Tạo một bản sao của sản phẩm đã có trong giỏ hàng
       const existingItem = { ...cartItems[existingItemIndex] };
-      const totalQuantity = existingItem.productVariant.quantity + 1;
+      // Tính tổng số lượng sản phẩm sau khi thêm vào giỏ hàng
+      const totalQuantity =
+        existingItem.productVariant.quantity + 1;
+      // Kiểm tra số lượng sản phẩm mới và số lượng hiện có
       if (totalQuantity > item.productVariant.quantity) {
-        toast.error(`The quantity has exceeded the limit product ${item.Product.name}: ${item.productVariant.quantity}`);
+        // Nếu số lượng mới vượt quá số lượng hiện có, thông báo và không thêm vào giỏ hàng
+        toast.error(
+          `The quantity has exceeded the limit product ${item.Product.name}: ${item.productVariant.quantity}`
+        );
         return;
       }
+      // Tạo một bản sao của đối tượng sản phẩm
       const updatedProductVariant = { ...existingItem.productVariant };
+      // Tăng số lượng sản phẩm lên 1
       updatedProductVariant.quantity += 1;
+      // Cập nhật lại đối tượng sản phẩm trong sản phẩm đã có trong giỏ hàng
       const updatedItem = { ...existingItem, productVariant: updatedProductVariant };
+      // Cập nhật sản phẩm trong giỏ hàng với sản phẩm đã được cập nhật số lượng
       const updatedCartItems = [...cartItems];
       updatedCartItems[existingItemIndex] = updatedItem;
-      setCartItems(updatedCartItems);
-      saveCartToLocalStorage(updatedCartItems);
-      window.location.reload()
+      // Cập nhật giỏ hàng trong Redux
+      dispatch(updateCart(updatedCartItems));
+      toast.success(`Product ${item.Product.name} added cart`);
     } else {
+      // Nếu sản phẩm chưa có trong giỏ hàng, thêm mới vào giỏ hàng với số lượng là 1
       const newItem = { ...item, productVariant: { ...item.productVariant, quantity: 1 } };
-      const updatedCartItems = [...cartItems, newItem];
-      setCartItems(updatedCartItems);
-      saveCartToLocalStorage(updatedCartItems);
-      window.location.reload()
+      dispatch(addToCart(newItem));
+      toast.success(`Product ${item.Product.name} added cart`);
     }
   };
-
-  useEffect(() => {
-    // Khôi phục dữ liệu giỏ hàng từ localStorage khi trang được tải lại
-    const storedCartItems = JSON.parse(localStorage.getItem("cartItems"));
-    if (storedCartItems) {
-      setCartItems(storedCartItems);
-    }
-  }, []);
-
-  const saveCartToLocalStorage = (items) => {
-    localStorage.setItem("cartItems", JSON.stringify(items));
-  };
-
   const displayData = useMemo(() => {
     if (filterData.length === 0) {
       return originalData;
@@ -85,12 +88,12 @@ const Drawer = () => {
     const totalProducts = filterData.length;
     const newTotalPages = Math.ceil(totalProducts / currentLimit);
     //console.log(totalProducts / currentLimit,totalProducts);
-  
+
     // Chỉ cập nhật totalPages nếu filterData không rỗng
     if (filterData.length > 0) {
       dispatch(setTotalPages(newTotalPages > 0 ? newTotalPages : 1));
     }
-  
+
     // Nếu currentPage vượt quá số trang mới, chuyển về trang cuối cùng
     if (currentPage > newTotalPages && newTotalPages > 0) {
       dispatch(setCurrentPage(newTotalPages));
@@ -100,6 +103,22 @@ const Drawer = () => {
     }
     // eslint-disable-next-line
   }, [displayData, currentLimit, filterData]);
+
+  useEffect(() => {
+    if (!initialized) {
+      const storedCartItems = localStorage.getItem("cartItems");
+      if (storedCartItems) {
+        // Parse dữ liệu từ localStorage và gửi action updateCart để cập nhật giỏ hàng
+        dispatch(updateCartdata(JSON.parse(storedCartItems)));
+      }
+      setInitialized(true);
+    }
+  }, [initialized, dispatch]);
+
+
+  useEffect(() => {
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+  }, [cartItems]);
 
 
   const handleProductSelect = (item) => {
@@ -181,17 +200,19 @@ const Drawer = () => {
 
           <div className="grid md:grid-cols-3 grid-cols-2 gap-6">
             {displayData.map((item) => (
-              <div key={item.id} className="bg-white shadow rounded overflow-hidden group">
+              <div key={item.id} className="bg-white shadow rounded-lg overflow-hidden group">
                 <div className="relative">
                   {item.Product.Image && item.Product.Image.URL ? (
+                     <Link to={{ pathname: `/product/${item.id}` }}>
                     <img
                       src={JSON.parse(item.Product.Image.URL)[0]}
                       alt="product 1"
                     />
+                    </Link>
                   ) : null}
 
                   <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                    <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
+                    <div onClick={() => handleAddToCart(item)} className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
                       <CgShoppingCart />
                     </div>
                     <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
@@ -247,7 +268,7 @@ const Drawer = () => {
                     </div>
                   </div>
                 </div>
-                <div onClick={()=>handleAddToCart(item)} className="block w-full py-1 text-center text-black font-bold bg-white border rounded-b hover:bg-transparent hover:text-red-500 transition">
+                <div onClick={() => handleAddToCart(item)} className="block w-full py-1 rounded-b-lg text-center text-yellow-300 hover:text-red-500 font-bold bg-black border transition">
                   Add to cart
                 </div>
               </div>
