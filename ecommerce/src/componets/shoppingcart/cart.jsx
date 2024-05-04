@@ -14,6 +14,9 @@ import { FaBackspace,FaTrash } from "react-icons/fa";
 import { Link , useNavigate} from "react-router-dom";
 import { fetchData, selectProductData } from "../../redux/slices/ productSlice"; // Import fetchData và selectProductData từ productSlice
 import toast from "react-hot-toast";
+import { selectUser } from "../../redux/auth/reducers/authReducer";
+
+
 
 const ITEMS_PER_PAGE = 5;
 
@@ -24,7 +27,7 @@ const Cart = () => {
   const cartItems = useSelector(selectCartItems);
   const [initialized, setInitialized] = useState(false);
   const navigate = useNavigate()
-
+     useSelector(selectUser);
   useEffect(() => {
     // Gọi fetchData khi component được render để lấy dữ liệu sản phẩm từ Redux store
     dispatch(fetchData({ currentPage: 1, currentLimit: 6 }));

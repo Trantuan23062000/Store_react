@@ -161,7 +161,7 @@ const Drawer = () => {
   return (
     <div>
       <div className="py-4 flex items-center gap-3">
-        <div className="text-primary text-base">
+        <div className="text-black text-base">
           <Link to="/">
             <FaHome />
           </Link>

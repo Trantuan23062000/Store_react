@@ -7,7 +7,6 @@ module.exports = (sequelize, DataTypes) => {
       Product.belongsTo(models.Brands,{ foreignKey: 'brandId' })
       Product.belongsTo(models.Images, { foreignKey: 'imageId' });
       Product.belongsToMany(models.productVariant, { through: 'Detail', foreignKey: 'productId' });
-      Product.belongsToMany(models.Orders,{through:'OrderDetails'})
     }
   }
   Product.init({

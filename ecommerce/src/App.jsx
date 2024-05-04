@@ -15,13 +15,14 @@ import Navbar from "./componets/home/navbar"
 import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
 import store from "./redux/store";
+import ResetPassword from "./componets/auth/reset-password";
+import Odersuccess from "./componets/order/odersuccess";
 
 function App() {
   return (
     <Provider store={store}>
     <Router>
       <div className="flex flex-col h-screen">
-        
         <Navbar />
         <Toaster /> 
         <div className="flex flex-1">
@@ -30,12 +31,14 @@ function App() {
               <Route exact path="/" element={<Home />} />
               <Route exact path="/shop" element={<Shop />} />
               <Route exact path="/product/:id" element={<Product/>}/>
-              <Route exact path="/cart" element={<Cart component={Cart}/>}/>
+              <Route exact path="/cart" element={<Cart/>}/>
               <Route exact path="/checkout" element={<Order/>}/>
               <Route exact path="/login" element={<Login/>}/>
               <Route exact path="/register" element={<Register/>}/>
               <Route exact path="/forgot-password" element={<Forgot/>}/>
+              <Route exact path="/reset-password" element={<ResetPassword/>}/>
               <Route exact path="/contact" element={<Contact/>}/>
+              <Route exact path="/oder-success" element={<Odersuccess/>}/>
             </Routes>
           </div>
         </div>

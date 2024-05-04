@@ -20,8 +20,11 @@ import size from "../controller/size/get"
 import color from "../controller/color/get"
 import related from "../controller/productSizeColor/related"
 import byName from"../controller/productSizeColor/getbyname"
-
 import index from "../controller/filter/index"
+import {RegisterUser} from "../controller/auth/Register"
+import {loginUser} from "../controller/auth/login"
+import { forgotPasswordController, resetPasswordController } from "../controller/auth/resetpassword"
+import {Orders} from "../controller/order/order"
 
 const router = express.Router();
 const upload = multer({
@@ -86,7 +89,18 @@ const ApiRouter = (app) => {
 
   router.post("/products/filter", index.filterController);
 
+  router.post("/register",RegisterUser)
+  router.post("/login",loginUser)
+  router.post('/forgot-password',forgotPasswordController)
+  router.post('/reset-password',resetPasswordController)
+  router.post('/oders',Orders)
+  
+
+
+
+
   return app.use("/api/v1", router);
+
 };
 
 export default ApiRouter;

@@ -12,13 +12,16 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Order.belongsTo(models.Users)
-      Order.belongsToMany(models.Products,{through:'OrderDetails'})
     }
   }
   Order.init({
-    name: DataTypes.STRING,
+    id: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4 
+    },
     order_date: DataTypes.DATE,
-    UserId: DataTypes.UUID
+    userId: DataTypes.UUID,
   }, {
     sequelize,
     modelName: 'Orders',

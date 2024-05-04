@@ -20,10 +20,6 @@ export const cartSlice = createSlice({
       localStorage.setItem("cartItems", JSON.stringify(state.items));
     },
 
-    removeFromCart: (state, action) => {
-      state.items = state.items.filter((item) => item.id !== action.payload.id);
-    },
-
     decreaseQuantity: (state, action) => {
       const { id } = action.payload;
       const existingItemIndex = state.items.findIndex((item) => item.id === id);
@@ -47,16 +43,35 @@ export const cartSlice = createSlice({
         }
       });
     },
-
+    removeFromCart(state, action) {
+      const { id } = action.payload;
+      const itemIndex = state.items.findIndex((item) => item.id === id);
+      if (itemIndex !== -1) {
+        state.items.splice(itemIndex, 1); // Xoá sản phẩm khỏi giỏ hàng
+        // Cập nhật giỏ hàng trong Local Storage sau mỗi lần xoá sản phẩm
+        localStorage.setItem("cartItems", JSON.stringify(state.items));
+      }
+    },
     // Bạn có thể giữ lại hoặc loại bỏ reducer này tùy thuộc vào yêu cầu của bạn
      updateCartdata: (state, action) => {
        state.items = action.payload; // Cập nhật giỏ hàng với dữ liệu mới từ payload
    },
+
+   removeAllItems(state) {
+    state.items = []; // Đặt giỏ hàng về trống
+  },
+   
   },
 });
 
-export const { addToCart, removeFromCart, decreaseQuantity, updateCart, updateCartdata } = cartSlice.actions;
+export const calculateTotalPrice = (cartItems) => {
+  return cartItems.reduce((total, item) => total + (item.productVariant.quantity * item.Product.price), 0);
+};
+
+
+export const { addToCart, removeFromCart, decreaseQuantity, updateCart, updateCartdata,removeAllItems } = cartSlice.actions;
 
 export const selectCartItems = (state) => state.cart.items;
+
 
 export default cartSlice.reducer;

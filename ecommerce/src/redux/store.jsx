@@ -5,12 +5,19 @@ import filterReducer from "./slices/filterReducer";
 import relatedReducer from "./slices/relatedProduct";
 import cartReducer from "./slices/cartSlice";
 import localStorageMiddleware from './middleware/localStorageMiddleware';
+import authReducer from './auth/reducers/authReducer'
+import forgotPasswordReducer from "./auth/actions/forgot-password";
+import orderReducer from "./oder/oderReduces"
 
 const rootReducer = combineReducers({
-  products: productReducer,
+  products: productReducer, 
   filter: filterReducer,
   dataRelated: relatedReducer,
   cart: cartReducer,
+  auth: authReducer,
+  forgotPassword: forgotPasswordReducer,
+  order: orderReducer,
+
 });
 const preloadedState = {
   cart: {
@@ -18,10 +25,11 @@ const preloadedState = {
   },
 };
 
+
 const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(localStorageMiddleware),
-  preloadedState,
+  preloadedState
 });
 
 export default store;

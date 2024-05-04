@@ -1,6 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import { RegisterUser } from "../../api/auth/register";
+import { useNavigate } from "react-router-dom";
 const Register = () => {
+  const navigate = useNavigate()
+  const [formData,setFormData] = useState({
+    username:'',
+    phone:'',
+    password:'',
+    email:'',
+    confirmPassword: '',
+
+  })
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const {password,confirmPassword } = formData;
+    if (password !== confirmPassword) {
+      // Nếu mật khẩu và mật khẩu xác nhận không khớp
+     toast.error("Passwords do not match")
+    } else {
+      const response = await RegisterUser(formData)
+      if(response && response.data && response.data.EC === 0){
+        toast.success(response.data.message)
+        navigate('/login')
+      }else{
+        toast.error(response.data.message)
+      }
+    }
+  };
+
   return (
     <div>
       <div className="container mx-auto items-center justify-center">
@@ -12,15 +50,39 @@ const Register = () => {
                   Register
                 </h2>
                 <div>
-                  <label htmlFor="email" className=" text-black mb-2 block">
-                    Email or phone number
+                  <label htmlFor="username" className=" text-black mb-2 block">
+                    Username
                   </label>
                   <input
+                    onChange={handleChange}
+                    type="text"
+                    name="username"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none"
+                    placeholder="Enter username"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="email" className=" text-black mb-2 block">
+                    Email
+                  </label>
+                  <input
+                    onChange={handleChange}
                     type="email"
                     name="email"
-                    id="email"
-                    className="block w-full border border-gray-300 px-4 py-3 text-black text-sm rounded-xl focus:ring-0 focus:border-primary placeholder-gray-400"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none"
                     placeholder="youremail.@domain.com"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="email" className=" text-black mb-2 block">
+                    Phone number 
+                  </label>
+                  <input
+                    onChange={handleChange}
+                    type="number"
+                    name="phone"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none"
+                    placeholder="+84 0123456789"
                   />
                 </div>
                 <div>
@@ -28,10 +90,10 @@ const Register = () => {
                     Password
                   </label>
                   <input
+                   onChange={handleChange}
                     type="password"
                     name="password"
-                    id="password"
-                    className="block w-full border border-gray-300 px-4 py-3 text-black text-sm focus:ring-0 placeholder-gray-400 rounded-xl"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none"
                   />
                 </div>
                 <div>
@@ -39,10 +101,10 @@ const Register = () => {
                     Password Confirm
                   </label>
                   <input
+                  onChange={handleChange}
                     type="password"
-                    name="password"
-                    id="password"
-                    className="block w-full border border-gray-300 px-4 py-3 text-black text-sm focus:ring-0 placeholder-gray-400 rounded-xl"
+                    name="confirmPassword"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none"
                   />
                 </div>
               </div>
@@ -65,10 +127,11 @@ const Register = () => {
               </div>
               <div className="mt-4">
                 <button
+                onClick={handleSubmit}
                   type="submit"
                   className="block w-full py-2 text-center text-white rounded-xl bg-black border border-primary hover:bg-red-500 hover:text-primary transition uppercase font-roboto font-medium"
                 >
-                  Login
+                  Register
                 </button>
               </div>
             </div>
@@ -90,7 +153,7 @@ const Register = () => {
 
             <div className="mt-4 text-center text-black">
               I have account?{" "}
-              <div className="text-black hover:text-red-500">
+              <div className=" text-blue-500 hover:text-red-500">
                 <Link to="/login">Login now</Link>
               </div>
             </div>

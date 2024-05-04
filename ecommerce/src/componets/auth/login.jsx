@@ -1,24 +1,61 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom"; // Import useHistory
+import { useDispatch } from "react-redux";
+import { loginUser } from "../../redux/auth/actions/authActions";
 
 const Login = () => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const dispatch = useDispatch();
+  const navigate = useNavigate(); // Get history object
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => { // Make the function asynchronous
+    e.preventDefault();
+    const { email, password } = formData;
+    try {
+      const response = await dispatch(loginUser(email, password)); // Wait for loginUser to finish
+      if (response && response.data && response.data.EC === 0) {
+        navigate("/shop"); // Redirect to shop page on successful login
+      } else {
+        // Handle login failure
+        console.error("Login failed:", response);
+        // Display error message to the user
+      }
+    } catch (error) {
+      // Handle login error
+      console.error("Error logging in:", error);
+      // Display error message to the user
+    }
+    }
+
   return (
     <div className="container mx-auto items-center justify-center">
       <div className="py-16">
-     
         <div className="max-w-lg bg-gray-50 text-black mx-auto shadow px-6 py-7 rounded-xl overflow-hidden">
           <div>
             <div className="space-y-2">
-            <h2 className="text-2xl text-center font-bold uppercase mb-1">Login</h2>
+              <h2 className="text-2xl text-center font-bold uppercase mb-1">
+                Login
+              </h2>
               <div>
                 <label htmlFor="email" className=" text-black mb-2 block">
-                  Email address
+                  Email
                 </label>
                 <input
-                  type="email"
+                  onChange={handleChange}
+                  type="text"
                   name="email"
-                  id="email"
-                  className="block w-full border border-gray-300 px-4 py-3 text-black text-sm rounded-xl focus:ring-0 focus:border-primary placeholder-gray-400"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none"
                   placeholder="youremail.@domain.com"
                 />
               </div>
@@ -27,10 +64,10 @@ const Login = () => {
                   Password
                 </label>
                 <input
+                  onChange={handleChange}
                   type="password"
                   name="password"
-                  id="password"
-                  className="block w-full border border-gray-300 px-4 py-3 text-black text-sm focus:ring-0 placeholder-gray-400 rounded-xl"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none"
                   placeholder="*******"
                 />
               </div>
@@ -50,10 +87,13 @@ const Login = () => {
                   Remember me
                 </label>
               </div>
-              <div className="text-black hover:text-blue-500"><Link to="/forgot-password">Forgot password</Link></div>
+              <div className="text-black hover:text-blue-500">
+                <Link to="/forgot-password">Forgot password</Link>
+              </div>
             </div>
             <div className="mt-4">
               <button
+                onClick={handleSubmit}
                 type="submit"
                 className="block w-full py-2 text-center text-white rounded-xl bg-black border border-primary hover:bg-red-500 hover:text-primary transition uppercase font-roboto font-medium"
               >
@@ -78,7 +118,10 @@ const Login = () => {
           </div>
           <div></div>
           <div className="mt-4 text-center text-black">
-            Don't have account? <div className="text-black hover:text-red-500"><Link to = "/register">Register now</Link></div>
+            Don't have account?{" "}
+            <div className="text-blue-500 hover:text-red-500">
+              <Link to="/register">Register now</Link>
+            </div>
           </div>
         </div>
       </div>
