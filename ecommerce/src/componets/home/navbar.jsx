@@ -263,52 +263,57 @@ const Navbar = () => {
                     {totalQuantity}
                   </span>
                 )}
-                {activeDropdown === "cart" && (
-                  <div className="origin-top-right absolute justify-between right-0 mt-2 w-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                    {cartItems.length > 0 ? (
-                      <div className="py-4 ml-3 font-semibold justify-around mx-auto">
-                        {cartItems.map((item) => (
-                          <div key={item.id}>
-                            <div className="flex justify-around">
-                              <div className="text-black">
-                                {item.Product.name} X{" "}
-                                {item.productVariant.quantity}{" "}
-                              </div>
-                              <img
-                                src={JSON.parse(item.Product.Image.URL)[0]}
-                                alt="product 1"
-                                className="w-8 h-8"
-                              />
-                              <label
-                                htmlFor={`color-${item.id}`}
-                                className="border border-gray-200 rounded-sm h-6 w-6 cursor-pointer shadow-sm block"
-                                style={{
-                                  backgroundColor: `${item.productVariant.Color.codeColor}`,
-                                }}
-                              ></label>
-                              <div
-                                onClick={() => handleRemoveFromCart(item)}
-                                className="text-red-500 hover:text-red-900"
-                              >
-                                <FaTrash />
-                              </div>
+                {activeDropdown === "cart" && cartItems.length > 0 && (
+                  <div className="origin-top-right absolute right-0 mt-2 w-96 rounded-md shadow-lg bg-gray-200 ring-1 ring-black ring-opacity-5">
+                    <div className="py-4 ml-3 font-semibold justify-around mx-auto">
+                      {cartItems.map((item) => (
+                        <div key={item.id}>
+                          <div className="flex justify-around">
+                            <div className="text-black">
+                              {item.Product.name} X{" "}
+                              {item.productVariant.quantity}{" "}
+                            </div>
+                            <img
+                              src={JSON.parse(item.Product.Image.URL)[0]}
+                              alt="product 1"
+                              className="w-8 h-8"
+                            />
+                            <div
+                              onClick={() => handleRemoveFromCart(item)}
+                              className="text-red-500 hover:text-red-900"
+                            >
+                              <FaTrash />
                             </div>
                           </div>
-                        ))}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex justify-around w-full space-x-4 mx-auto">
+                      <div className="bg-black justify-center text-white px-8 py-2 font-medium rounded-lg uppercase flex items-center gap-2 hover:bg-yellow-500 hover:text-red-500 transition duration-300 ease-in-out transform hover:scale-120">
+                        <Link
+                          className="justify-center text-center"
+                          to="/cart"
+                          onClick={handleGoToCart}
+                        >
+                          Go to Cart
+                        </Link>
                       </div>
-                    ) : (
-                      <div className="py-4 ml-3 flex text-black text-center font-semibold justify-center mx-auto">
-                        No data
+                      <div className="bg-black justify-center text-white px-8 py-2 font-medium rounded-lg uppercase flex items-center gap-2 hover:bg-yellow-500 hover:text-red-500 transition duration-300 ease-in-out transform hover:scale-120">
+                        <Link
+                          className="justify-center text-center"
+                          to="/checkout"
+                        >
+                          Checkout
+                        </Link>
                       </div>
-                    )}
-                    <div className="bg-black justify-center text-white px-8 py-2 font-medium rounded-b uppercase flex items-center gap-2 hover:bg-yellow-500 hover:text-red-500 transition duration-300 ease-in-out transform hover:scale-120">
-                      <Link
-                        className="flex justify-center text-center"
-                        to="/cart"
-                        onClick={handleGoToCart} // Gọi hàm xử lý khi click
-                      >
-                        Go to Cart
-                      </Link>
+                    </div>
+                  </div>
+                )}
+
+                {activeDropdown === "cart" && cartItems.length === 0 && (
+                  <div className="origin-top-right absolute right-0 mt-2 w-96 rounded-md shadow-lg bg-gray-200 ring-1 ring-black ring-opacity-5">
+                    <div className="py-4 ml-3 flex text-black text-center font-semibold justify-center mx-auto">
+                      No items in the cart
                     </div>
                   </div>
                 )}

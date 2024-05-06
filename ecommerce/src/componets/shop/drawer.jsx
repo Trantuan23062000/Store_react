@@ -16,7 +16,12 @@ import {
   CgSearch,
   CgShoppingCart,
 } from "react-icons/cg";
-import { addToCart, updateCart, updateCartdata,selectCartItems } from "../../redux/slices/cartSlice";
+import {
+  addToCart,
+  updateCart,
+  updateCartdata,
+  selectCartItems,
+} from "../../redux/slices/cartSlice";
 import { FaHome, FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -43,8 +48,7 @@ const Drawer = () => {
       // Tạo một bản sao của sản phẩm đã có trong giỏ hàng
       const existingItem = { ...cartItems[existingItemIndex] };
       // Tính tổng số lượng sản phẩm sau khi thêm vào giỏ hàng
-      const totalQuantity =
-        existingItem.productVariant.quantity + 1;
+      const totalQuantity = existingItem.productVariant.quantity + 1;
       // Kiểm tra số lượng sản phẩm mới và số lượng hiện có
       if (totalQuantity > item.productVariant.quantity) {
         // Nếu số lượng mới vượt quá số lượng hiện có, thông báo và không thêm vào giỏ hàng
@@ -58,7 +62,10 @@ const Drawer = () => {
       // Tăng số lượng sản phẩm lên 1
       updatedProductVariant.quantity += 1;
       // Cập nhật lại đối tượng sản phẩm trong sản phẩm đã có trong giỏ hàng
-      const updatedItem = { ...existingItem, productVariant: updatedProductVariant };
+      const updatedItem = {
+        ...existingItem,
+        productVariant: updatedProductVariant,
+      };
       // Cập nhật sản phẩm trong giỏ hàng với sản phẩm đã được cập nhật số lượng
       const updatedCartItems = [...cartItems];
       updatedCartItems[existingItemIndex] = updatedItem;
@@ -67,7 +74,10 @@ const Drawer = () => {
       toast.success(`Product ${item.Product.name} added cart`);
     } else {
       // Nếu sản phẩm chưa có trong giỏ hàng, thêm mới vào giỏ hàng với số lượng là 1
-      const newItem = { ...item, productVariant: { ...item.productVariant, quantity: 1 } };
+      const newItem = {
+        ...item,
+        productVariant: { ...item.productVariant, quantity: 1 },
+      };
       dispatch(addToCart(newItem));
       toast.success(`Product ${item.Product.name} added cart`);
     }
@@ -115,11 +125,9 @@ const Drawer = () => {
     }
   }, [initialized, dispatch]);
 
-
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
-
 
   const handleProductSelect = (item) => {
     dispatch(setSelectedProduct(item));
@@ -200,19 +208,25 @@ const Drawer = () => {
 
           <div className="grid md:grid-cols-3 grid-cols-2 gap-6">
             {displayData.map((item) => (
-              <div key={item.id} className="bg-white shadow rounded-lg overflow-hidden group">
+              <div
+                key={item.id}
+                className="bg-white shadow rounded-lg overflow-hidden group"
+              >
                 <div className="relative">
                   {item.Product.Image && item.Product.Image.URL ? (
-                     <Link to={{ pathname: `/product/${item.id}` }}>
-                    <img
-                      src={JSON.parse(item.Product.Image.URL)[0]}
-                      alt="product 1"
-                    />
+                    <Link to={{ pathname: `/product/${item.id}` }}>
+                      <img
+                        src={JSON.parse(item.Product.Image.URL)[0]}
+                        alt="product 1"
+                      />
                     </Link>
                   ) : null}
 
                   <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                    <div onClick={() => handleAddToCart(item)} className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
+                    <div
+                      onClick={() => handleAddToCart(item)}
+                      className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0"
+                    >
                       <CgShoppingCart />
                     </div>
                     <div className="text-white bg-black hover:text-red-600 text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-yellow-300 transition transform translate-y-2 group-hover:translate-y-0">
@@ -229,21 +243,54 @@ const Drawer = () => {
                   </div>
                 </div>
                 <div className="pt-4 pb-3 px-4">
-                  <div>
+                  <div className="flex space-x-2">
                     <h4 className="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition">
                       {item.Product.name}
                     </h4>
+                    <label
+                      htmlFor={`color-${item.id}`}
+                      className="border border-gray-200 rounded-lg h-6 w-6 cursor-pointer shadow-sm block"
+                      style={{
+                        backgroundColor: `${item.productVariant.Color.codeColor}`,
+                      }}
+                    ></label>
                   </div>
                   <div className="flex items-baseline mb-1 space-x-2">
-                    <p className="text-xl text-primary font-semibold">
-                      {item.Product.price.toLocaleString("en-US", {
-                        style: "currency",
-                        currency: "USD",
-                      })}
-                    </p>
-                    <p className="text-sm text-gray-400 line-through">
-                      $55.90
-                    </p>
+                    {item.Product.sale ? (
+                      <>
+                        <p className="text-xl text-gray-500  font-semibold">
+                          {(
+                            item.Product.price -
+                            (item.Product.price * item.Product.sale) / 100
+                          ).toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          })}
+                        </p>
+                        
+                        <p className="text-sm text-gray-400 line-through">
+                          {item.Product.price.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          })}
+                        </p>
+                        <p className="text-sm font-bold text-red-500">
+                          Quantity:{item.productVariant.quantity}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-xl text-gray-500 font-semibold">
+                          {item.Product.price.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          })}
+                        </p>
+                        <p className="text-sm font-bold text-red-500">
+                          Quantity:{item.productVariant.quantity}
+                        </p>
+                      </>
+                    )}
                   </div>
                   <div className="flex items-center">
                     <div className="flex gap-1 text-sm text-yellow-400">
@@ -263,12 +310,13 @@ const Drawer = () => {
                         <FaStar />
                       </span>
                     </div>
-                    <div className="text-xs text-gray-500 ml-3">
-                      (150)
-                    </div>
+                    <div className="text-xs text-gray-500 ml-3">(150)</div>
                   </div>
                 </div>
-                <div onClick={() => handleAddToCart(item)} className="block w-full py-1 rounded-b-lg text-center text-yellow-300 hover:text-red-500 font-bold bg-black border transition">
+                <div
+                  onClick={() => handleAddToCart(item)}
+                  className="block w-full py-1 rounded-b-lg text-center text-yellow-300 hover:text-red-500 font-bold bg-black border transition"
+                >
                   Add to cart
                 </div>
               </div>

@@ -22,8 +22,11 @@ const createOrder = async (orderData, orderDetailData) => {
     const detailIds = orderDetailData.detail;
     const productVariantIds = await getProductVariantIds(detailIds, transaction);
 
-    // Cập nhật số lượng sản phẩm trong bảng ProductVariant
-    await updateProductVariantQuantity(productVariantIds, orderDetailData.quantity, transaction);
+    // Cập nhật số lượng sản phẩm trong bảng ProductVariant dựa trên dữ liệu gửi từ client
+    await updateProductVariantQuantity(orderDetailData.cart, transaction);
+
+    // Lưu thông tin productVariantId và quantity vào trường data của bảng OrderDetails
+    await saveProductVariantInfoToOrderDetails(orderDetailData.cart, newOrderDetail.id, transaction);
 
     await transaction.commit();
     return { newOrder, newOrderDetail };
@@ -31,6 +34,20 @@ const createOrder = async (orderData, orderDetailData) => {
     if (transaction) await transaction.rollback();
     console.log(error);
     throw new Error("Failed to create order and order details");
+  }
+};
+
+const saveProductVariantInfoToOrderDetails = async (cart, orderDetailId, transaction) => {
+  for (const item of cart) {
+    // Tạo hoặc cập nhật dữ liệu trong trường data của bảng OrderDetails
+    const orderDetail = await db.OrderDetails.findByPk(orderDetailId, { transaction });
+    if (orderDetail) {
+      const data = orderDetail.data ? JSON.parse(orderDetail.data) : {};
+      // Thêm hoặc cập nhật thông tin productVariantId và số lượng
+      data[item.productVariantId] = item.quantity;
+      orderDetail.data = JSON.stringify(data);
+      await orderDetail.save({ transaction });
+    }
   }
 };
 
@@ -47,16 +64,26 @@ const getProductVariantIds = async (detailIds, transaction) => {
   return productVariantIds;
 };
 
-const updateProductVariantQuantity = async (productVariantIds, quantity, transaction) => {
-  // Duyệt qua danh sách id của sản phẩm để cập nhật số lượng trong bảng ProductVariant
-  for (const productVariantId of productVariantIds) {
-    const productVariant = await db.productVariant.findByPk(productVariantId, { transaction });
+const updateProductVariantQuantity = async (cart, transaction) => {
+  for (const item of cart) {
+    // Tìm sản phẩm biến thể tương ứng
+    const productVariant = await db.productVariant.findByPk(item.productVariantId, { transaction });
     if (productVariant) {
-      // Cập nhật số lượng sản phẩm trong bảng ProductVariant
-      productVariant.quantity -= quantity;
+      // Lấy số lượng sản phẩm hiện có từ cơ sở dữ liệu
+      const currentQuantity = productVariant.quantity;
+      
+      // Trừ số lượng sản phẩm trong giỏ hàng từ số lượng hiện có
+      const newQuantity = currentQuantity - item.productVariant.quantity;
+
+      // Đảm bảo số lượng không âm
+      productVariant.quantity = Math.max(newQuantity, 0);
+
+      // Lưu lại thay đổi vào cơ sở dữ liệu
       await productVariant.save({ transaction });
+
     }
   }
 };
+
 
 module.exports = { createOrder };

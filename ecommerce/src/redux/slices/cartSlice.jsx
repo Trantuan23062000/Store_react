@@ -65,7 +65,14 @@ export const cartSlice = createSlice({
 });
 
 export const calculateTotalPrice = (cartItems) => {
-  return cartItems.reduce((total, item) => total + (item.productVariant.quantity * item.Product.price), 0);
+  return cartItems.reduce((total, item) => {
+    // Tính giá sản phẩm sau khi giảm giá (nếu có)
+    const discountedPrice = item.Product.price - (item.Product.price * (item.Product.sale || 0) / 100);
+    // Tính tổng tiền của sản phẩm sau khi giảm giá và nhân với số lượng
+    const itemTotal = discountedPrice * item.productVariant.quantity;
+    // Cộng tổng tiền của sản phẩm vào tổng tiền tổng cộng
+    return total + itemTotal;
+  }, 0);
 };
 
 

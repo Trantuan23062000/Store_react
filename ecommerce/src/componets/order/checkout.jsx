@@ -10,6 +10,7 @@
   import {useNavigate} from "react-router-dom"
   import { removeAllItems } from "../../redux/slices/cartSlice";
   import SelecttedPayment from "./selecttedPayment";
+import { openPayPal } from "../../api/paypal/paypal";
   const Checkout = () => {
     const dispatch = useDispatch()
     const user = useSelector(selectUser);
@@ -26,12 +27,21 @@
         0
       );
       setTotalQuantity(newTotalQuantity);
+      const paymentData = JSON.parse(localStorage.getItem("paymentData"));
+      if (paymentData) {
+        localStorage.removeItem("paymentData");
+      }
     }, [cart]);
     const handleInputChange = (e) => {
       // Xử lý thay đổi giá trị của input tại đây (nếu cần)
     };
-    const Submit = async () => {
-      window.open("http://sandbox.vnpayment.vn/tryitnow/Home/CreateOrder", "_blank")
+    const cartJSON = JSON.stringify(
+      cart.map((item) => ({
+        id: item.productVariant.id,
+        quantity: item.productVariant.quantity,
+      }))
+    );
+    const SubmitDelivery = async () => {
       const orderData = { 
       order_date: new Date().toISOString().split('T')[0], // Lấy ngày hiện tại
       userId: user ? user.id : null, // Lấy userId từ user nếu user tồn tại
@@ -39,11 +49,15 @@
       const orderDetailData = { 
         detail:cart.map((item)=>item.id),
         quantity: totalQuantity,
-        status:0
+        status:0,
+        total:totalPriceWithShipping,
+        cart,
+        payment:"Delivery",
+        data:cartJSON
+
       };
       try {
         const response = await Oders({ orderData, orderDetailData });
-        console.log(response);
         if (response.data.EC === 0) {
           // Chuyển hướng về trang shop nếu đặt hàng thành công
           dispatch(removeAllItems())
@@ -57,8 +71,36 @@
       }
     };
 
-    const openPaymentPage = () => {
+    const submitPaypal = async () => {
+      const orderData = { 
+        order_date: new Date().toISOString().split('T')[0],
+        userId: user ? user.id : null,
+      };
       
+      const orderDetailData = { 
+        detail: cart.map((item) => item.id),
+        quantity: totalQuantity,
+        status: 1,
+        total: totalPriceWithShipping,
+        payment:"Paypal",
+        cart,
+        data:cartJSON
+      };
+      try {
+        const response = await openPayPal(orderDetailData);
+        if (response.data.EC === 0) {
+          localStorage.setItem("paymentData", JSON.stringify({orderData,orderDetailData}));
+          // Nếu thanh toán PayPal thành công, chuyển hướng đến trang thanh toán
+          window.location.href = response.data.approval_url;
+          
+        } else {
+          // Xử lý trường hợp không thành công (ví dụ: hiển thị thông báo)
+          toast.error("Failed to open PayPal for payment");
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to create order");
+      }
     };
 
     const show = () =>{
@@ -71,7 +113,7 @@
 
     return (
       <>
-      {selectOrder?(<SelecttedPayment click = {Submit} close = {close} pay={openPaymentPage}/>):null}
+      {selectOrder?(<SelecttedPayment click = {SubmitDelivery} close = {close} paypal={submitPaypal}/>):null}
     
       <div className="mx-auto max-w-4xl p-4 border bg-white border-black rounded mb-12">
         <h3 className="text-xl font-medium capitalize mb-4 border-b border-gray-200">

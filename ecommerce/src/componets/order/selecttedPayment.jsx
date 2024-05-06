@@ -43,14 +43,14 @@ const SelecttedPayment = (props) => {
               </button>
               <button
                 type="button"
-                onClick={props.pay}
+
                 className="text-white flex bg-blue-600 hover:text-white hover:bg-blue-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-24 py-2 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
               >
                 Payment CreditCard <FaAmazonPay size={24}/>
               </button>
               <button
                 type="button"
-                onClick={props.click}
+                onClick={props.paypal}
                 className="text-white flex bg-yellow-500 hover:text-white hover:bg-yellow-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-24 py-2 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
               >
                 Payment on Paypay <FaPaypal size={24}/>

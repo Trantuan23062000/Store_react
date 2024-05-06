@@ -25,6 +25,7 @@ import {RegisterUser} from "../controller/auth/Register"
 import {loginUser} from "../controller/auth/login"
 import { forgotPasswordController, resetPasswordController } from "../controller/auth/resetpassword"
 import {Orders} from "../controller/order/order"
+import { createPayment, executePayment, cancelPayment } from '../controller/paypal/paypal_controller'
 
 const router = express.Router();
 const upload = multer({
@@ -94,6 +95,11 @@ const ApiRouter = (app) => {
   router.post('/forgot-password',forgotPasswordController)
   router.post('/reset-password',resetPasswordController)
   router.post('/oders',Orders)
+
+
+  router.post('/create-payment', createPayment);
+  router.get('/success', executePayment);
+  router.get('/cancel', cancelPayment);
   
 
 
