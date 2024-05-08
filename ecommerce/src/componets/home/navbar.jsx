@@ -141,8 +141,8 @@ const Navbar = () => {
 
   return (
     <div>
-      <nav className="bg-black p-3 px-4 py-8 sticky top-0 z-50">
-        <div className="container mx-auto">
+      <nav className="bg-black container mx-auto p-3 px-4 py-8 sticky top-0 z-50">
+        <div className="">
           <div className="flex justify-between items-center">
             <div className="flex-shrink-0">
               <div className="text-white hover:text-yellow-300 text-lg font-semibold">
